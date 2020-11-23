@@ -8,10 +8,11 @@ using Terraria.ModLoader.IO;
 
 namespace ModularTools.Core
 {
-	public abstract class ModularItem : BaseItem, IEnergyStorage
+	public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 	{
 		public List<BaseModule> InstalledModules;
 		public EnergyStorage EnergyStorage;
+		public HeatStorage HeatStorage;
 
 		public sealed override void AutoStaticDefaults()
 		{
@@ -24,6 +25,7 @@ namespace ModularTools.Core
 		{
 			InstalledModules = new List<BaseModule>();
 			EnergyStorage = new EnergyStorage(0);
+			HeatStorage = new HeatStorage(100);
 		}
 
 		public override ModItem Clone(Item item)
@@ -37,15 +39,18 @@ namespace ModularTools.Core
 		public override TagCompound Save() => new TagCompound
 		{
 			["Modules"] = InstalledModules,
-			["Energy"] = EnergyStorage.Save()
+			["Energy"] = EnergyStorage.Save(),
+			["Heat"] = HeatStorage.Save(),
 		};
 
 		public override void Load(TagCompound tag)
 		{
 			InstalledModules = tag.GetList<BaseModule>("Modules").ToList();
 			EnergyStorage.Load(tag.GetCompound("Energy"));
+			HeatStorage.Load(tag.GetCompound("Heat"));
 		}
 
 		public EnergyStorage GetEnergyStorage() => EnergyStorage;
+		public HeatStorage GetHeatStorage() => HeatStorage;
 	}
 }
