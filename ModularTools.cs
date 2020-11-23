@@ -9,9 +9,13 @@ namespace ModularTools
 
 		public static ModularTools Instance => ModContent.GetInstance<ModularTools>();
 
+		internal ModHotKey hotKey;
+		
 		public override void Load()
 		{
 			ModuleSerializer.Load();
+
+			hotKey=RegisterHotKey("Open Upgrade UI", "K");
 		}
 
 		public override void AddRecipes()

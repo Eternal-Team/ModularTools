@@ -1,26 +1,17 @@
-﻿using ModularTools.Content;
-using ModularTools.Core;
+﻿using Terraria.GameInput;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace ModularTools
 {
 	public class MTPlayer : ModPlayer
 	{
-		public override TagCompound Save()
+		public override void ProcessTriggers(TriggersSet triggersSet)
 		{
-			TestModule module = ModuleLoader.CreateInstance<TestModule>();
-			module.testInt = 420;
-			
-			return new TagCompound
+			if (ModularTools.Instance.hotKey.JustPressed)
 			{
-				["Test"] = module
-			};
-		}
-
-		public override void Load(TagCompound tag)
-		{
-			TestModule module = tag.Get<TestModule>("Test");
+				UpgradeStationUISystem.Instance.upgradeState.OnInitialize();
+				UpgradeStationUISystem.Instance.upgradeState.Visible = true;
+			}
 		}
 	}
 }

@@ -1,8 +1,9 @@
-﻿using ModularTools.Core;
+﻿using ModularTools.Content.Items.Tools;
+using ModularTools.Core;
 using Terraria.ID;
 using Terraria.ModLoader.IO;
 
-namespace ModularTools.Content
+namespace ModularTools.Content.Modules
 {
 	public class TestModule1 : BaseModule
 	{
@@ -11,9 +12,9 @@ namespace ModularTools.Content
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("This is a test1 module");
-			
+
 			AddRequiredModule<TestModule>();
-			
+
 			AddValidModularItem<ModularPickaxe>();
 		}
 

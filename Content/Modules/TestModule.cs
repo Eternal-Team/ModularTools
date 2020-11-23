@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader.IO;
 
-namespace ModularTools.Content
+namespace ModularTools.Content.Modules
 {
 	public class TestModule : BaseModule
 	{

@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ModularTools.Content
+namespace ModularTools.Content.Items.Tools
 {
 	public class ModularPickaxe : ModularItem
 	{
