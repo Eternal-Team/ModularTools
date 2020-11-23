@@ -27,6 +27,11 @@ namespace ModularTools.Content.Items.Tools
 			item.pick = 40;
 		}
 
+		public override void UpdateInventory(Player player)
+		{
+			foreach (BaseModule module in InstalledModules) module.OnUpdate(this);
+		}
+
 		public override bool CanUseItem(Player player) => true;
 
 		public override bool UseItem(Player player)

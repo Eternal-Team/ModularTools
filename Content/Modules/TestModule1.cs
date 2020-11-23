@@ -13,7 +13,7 @@ namespace ModularTools.Content.Modules
 		{
 			Tooltip.SetDefault("This is a test1 module");
 
-			AddRequiredModule<TestModule>();
+			AddRequiredModule<CopperPlating>();
 
 			AddValidModularItem<ModularPickaxe>();
 		}

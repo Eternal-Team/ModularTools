@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary;
 using Microsoft.Xna.Framework;
-using ModularTools.Content;
 using ModularTools.Core;
 using Terraria;
 using Terraria.GameContent;
@@ -28,9 +27,9 @@ namespace ModularTools
 			Append(panel);
 
 			modulePanel = new UIPanel();
-			modulePanel.Width.Set(-58f, 100f);
+			modulePanel.Width.Set(1000f-58f, 0f);
 			modulePanel.Height.Set(0f, 100f);
-			modulePanel.HAlign = 1f;
+			modulePanel.Left.Set(58f,0f);;
 			modulePanel.SetPadding(8);
 			panel.Append(modulePanel);
 
@@ -68,14 +67,14 @@ namespace ModularTools
 				BaseModule module = ModuleLoader.modules[type];
 
 				UIPanel mPanel = new UIPanel();
-				mPanel.Width.Set(200f, 0f);
-				mPanel.Height.Set(50f, 0f);
-				mPanel.Top.Set(50f * y++, 0f);
+				mPanel.Width.Set(400f, 0f);
+				mPanel.Height.Set(100f, 0f);
+				mPanel.Top.Set(108f * y++, 0f);
 				mPanel.SetPadding(8);
 				// mPanel.OnClick += (evt, element) => OpenItem(modularItem);
 				modulePanel.Append(mPanel);
 
-				UIText text = new UIText(module.DisplayName.GetDefault());
+				UIText text = new UIText(module.DisplayName.GetDefault() + "\n" + module.Tooltip.GetDefault());
 				text.Width.Set(0f, 100f);
 				text.Height.Set(0f, 100f);
 				mPanel.Append(text);

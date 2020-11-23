@@ -1,4 +1,6 @@
-﻿using Terraria.GameInput;
+﻿using ModularTools.Content.Items.Ingredients;
+using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace ModularTools
@@ -12,6 +14,11 @@ namespace ModularTools
 				UpgradeStationUISystem.Instance.upgradeState.OnInitialize();
 				UpgradeStationUISystem.Instance.upgradeState.Visible = true;
 			}
+		}
+
+		public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+		{
+			player.QuickSpawnItem(ModContent.ItemType<Brain>());
 		}
 	}
 }
