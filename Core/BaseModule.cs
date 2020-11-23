@@ -94,6 +94,21 @@ namespace ModularTools.Core
 		{
 		}
 
+		public virtual void OnInstalled(ModularItem item)
+		{
+			
+		}
+
+		public virtual void OnRemoved(ModularItem item)
+		{
+			
+		}
+
+		public virtual void OnUpdate(ModularItem item)
+		{
+			
+		}
+		
 		public virtual TagCompound Save() => null;
 
 		public virtual void Load(TagCompound tag)
