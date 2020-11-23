@@ -1,0 +1,10 @@
+author = Itorius, orian34 & team
+version = 1.0
+displayName = Modular Tools
+homepage = https://terraria.itorius.com/
+hideCode = false
+hideResources = false
+includeSource = false
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, .editorconfig, .gitignore, *.sln, *.md
+includePDB = true
+modReferences = BaseLibrary, EnergyLibrary

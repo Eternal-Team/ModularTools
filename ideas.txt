@@ -1,0 +1,27 @@
+mechanics
+    energy - you need energy to function
+    heat - each component generates heat, too much heat damages tools/armor and player
+
+environmental effects
+    heat - based on height (space - extreme cold, hell - extreme heat)
+    medium rock layer - dangerous gases
+    jungle - poisonous atmosphere
+    ice biome - low temperatures
+    underground ice biome - very low temperatures
+    water - electrocution
+
+PRE-HM
+
+armor platings
+    copper - high heat dissapation, low defense
+    gold - medium heat dissapation, very low defense
+    aluminium - medium heat dissapation, medium defense
+    steel - low heat dissapation, very high defense
+    iron - low heat dissapation, high defense,
+    tungsten carbide - medium heat dissapation, extremely high defense
+    diamond doped tungsten carbine - very high heat dissapation, extremely high defense
+
+batteries
+    nickel-iron - low energy storage
+    lead-acid battery - medium energy storage (sulfur is obtained near lava lakes)
+    lithium iron phosphate - high energy storage

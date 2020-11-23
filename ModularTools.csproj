@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Mods.targets" />
+  <PropertyGroup>
+    <AssemblyName>ModularTools</AssemblyName>
+    <TargetFramework>net45</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
+    <ProjectReference Include="..\EnergyLibrary\EnergyLibrary.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="README.md" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+</Project>
