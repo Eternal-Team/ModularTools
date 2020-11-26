@@ -27,9 +27,9 @@ namespace ModularTools
 			Append(panel);
 
 			modulePanel = new UIPanel();
-			modulePanel.Width.Set(1000f-58f, 0f);
+			modulePanel.Width.Set(1000f - 58f - 16f, 0f);
 			modulePanel.Height.Set(0f, 100f);
-			modulePanel.Left.Set(58f,0f);;
+			modulePanel.Left.Set(58f, 0f);
 			modulePanel.SetPadding(8);
 			panel.Append(modulePanel);
 

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using BaseLibrary.Utility;
 using ModularTools.Content;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -104,7 +105,7 @@ namespace ModularTools.Core
 			
 		}
 
-		public virtual void OnUpdate(ModularItem item)
+		public virtual void OnUpdate(ModularItem item, Player player)
 		{
 			
 		}

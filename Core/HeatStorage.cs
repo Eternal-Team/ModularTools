@@ -1,14 +1,24 @@
 ﻿using System;
-using System.IO;
 using Terraria.ModLoader.IO;
 
 namespace ModularTools.Core
 {
 	public class HeatStorage
 	{
-		public ulong Heat { get; private set; }
+		public float Heat;
 
-		public ulong Capacity { get; private set; }
+		public float Temperature
+		{
+			get => Heat / Capacity;
+			set => Heat = Capacity * value;
+		}
+
+		public float Capacity; // J/K
+		public float TransferCoefficient; //  W/m2*K
+		public float Area; // m2
+
+		public float CoolingCoefficient => TransferCoefficient * Area / Capacity;
+
 		// public ulong MaxExtract { get; private set; }
 		// public ulong MaxReceive { get; private set; }
 
@@ -16,26 +26,26 @@ namespace ModularTools.Core
 		{
 		}
 
-		public HeatStorage(ulong capacity)
-		{
-			Capacity = capacity;
-			// MaxReceive = capacity;
-			// MaxExtract = capacity;
-		}
-
-		public HeatStorage(ulong capacity, ulong maxTransfer)
-		{
-			Capacity = capacity;
-			// MaxReceive = maxTransfer;
-			// MaxExtract = maxTransfer;
-		}
-
-		public HeatStorage(ulong capacity, ulong maxReceive, ulong maxExtract)
-		{
-			Capacity = capacity;
-			// MaxReceive = maxReceive;
-			// MaxExtract = maxExtract;
-		}
+		// public HeatStorage(ulong capacity)
+		// {
+		// 	Capacity = capacity;
+		// 	// MaxReceive = capacity;
+		// 	// MaxExtract = capacity;
+		// }
+		//
+		// public HeatStorage(ulong capacity, ulong maxTransfer)
+		// {
+		// 	Capacity = capacity;
+		// 	// MaxReceive = maxTransfer;
+		// 	// MaxExtract = maxTransfer;
+		// }
+		//
+		// public HeatStorage(ulong capacity, ulong maxReceive, ulong maxExtract)
+		// {
+		// 	Capacity = capacity;
+		// 	// MaxReceive = maxReceive;
+		// 	// MaxExtract = maxExtract;
+		// }
 
 		public HeatStorage Clone()
 		{
@@ -55,6 +65,19 @@ namespace ModularTools.Core
 			else Capacity += (ulong)capacity;
 		}
 
+		public float TransferToEnvironment(float environmentTemp, float timeStep)
+		{
+			float oldTemperature = Temperature;
+			Temperature = (float)(environmentTemp + (Temperature - environmentTemp) * Math.Exp(-CoolingCoefficient * timeStep));
+			return (Temperature - oldTemperature) * Capacity;
+		}
+
+		public void ModifyHeat(float joules)
+		{
+			Heat += joules;
+			if (Heat < 0) Heat = 0;
+		}
+
 		// public void SetMaxTransfer(ulong maxTransfer)
 		// {
 		// SetMaxReceive(maxTransfer);
@@ -71,43 +94,43 @@ namespace ModularTools.Core
 		// MaxExtract = maxExtract;
 		// }
 
-		public ulong InsertHeat(ulong amount)
-		{
-			ulong CurrentDelta = Math.Min(Capacity - Heat, amount);
-			Heat += CurrentDelta;
-
-			// DeltaBuffer.Enqueue(CurrentDelta);
-			//
-			// if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
-			// {
-			// 	DeltaBuffer.Dequeue();
-			// 	AverageDelta = (long)DeltaBuffer.Average(i => i);
-			// }
-			// else AverageDelta = CurrentDelta;
-			//
-			// OnChanged?.Invoke();
-
-			return CurrentDelta;
-		}
-
-		public ulong ExtractHeat(ulong amount)
-		{
-			ulong CurrentDelta = Math.Min(Heat, amount);
-			Heat -= CurrentDelta;
-
-			// DeltaBuffer.Enqueue(CurrentDelta);
-			//
-			// if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
-			// {
-			// 	DeltaBuffer.Dequeue();
-			// 	AverageDelta = (long)DeltaBuffer.Average(i => i);
-			// }
-			// else AverageDelta = CurrentDelta;
-			//
-			// OnChanged?.Invoke();
-
-			return CurrentDelta;
-		}
+		// public ulong InsertHeat(ulong amount)
+		// {
+		// 	ulong CurrentDelta = Math.Min(Capacity - Heat, amount);
+		// 	Heat += CurrentDelta;
+		//
+		// 	// DeltaBuffer.Enqueue(CurrentDelta);
+		// 	//
+		// 	// if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
+		// 	// {
+		// 	// 	DeltaBuffer.Dequeue();
+		// 	// 	AverageDelta = (long)DeltaBuffer.Average(i => i);
+		// 	// }
+		// 	// else AverageDelta = CurrentDelta;
+		// 	//
+		// 	// OnChanged?.Invoke();
+		//
+		// 	return CurrentDelta;
+		// }
+		//
+		// public ulong ExtractHeat(ulong amount)
+		// {
+		// 	ulong CurrentDelta = Math.Min(Heat, amount);
+		// 	Heat -= CurrentDelta;
+		//
+		// 	// DeltaBuffer.Enqueue(CurrentDelta);
+		// 	//
+		// 	// if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
+		// 	// {
+		// 	// 	DeltaBuffer.Dequeue();
+		// 	// 	AverageDelta = (long)DeltaBuffer.Average(i => i);
+		// 	// }
+		// 	// else AverageDelta = CurrentDelta;
+		// 	//
+		// 	// OnChanged?.Invoke();
+		//
+		// 	return CurrentDelta;
+		// }
 
 		public TagCompound Save() => new TagCompound
 		{
@@ -119,27 +142,27 @@ namespace ModularTools.Core
 
 		public void Load(TagCompound tag)
 		{
-			Heat = tag.Get<ulong>("Heat");
-			Capacity = tag.Get<ulong>("Capacity");
+			Heat = tag.Get<float>("Heat");
+			Capacity = tag.Get<float>("Capacity");
 			// MaxExtract = tag.Get<ulong>("MaxExtract");
 			// MaxReceive = tag.Get<ulong>("MaxReceive");
 		}
 
-		public void Write(BinaryWriter writer)
-		{
-			writer.Write(Heat);
-			writer.Write(Capacity);
-			// writer.Write(MaxExtract);
-			// writer.Write(MaxReceive);
-		}
-
-		public void Read(BinaryReader reader)
-		{
-			Heat = reader.ReadUInt64();
-			Capacity = reader.ReadUInt64();
-			// MaxExtract = reader.ReadUInt64();
-			// MaxReceive = reader.ReadUInt64();
-		}
+		// public void Write(BinaryWriter writer)
+		// {
+		// 	writer.Write(Heat);
+		// 	writer.Write(Capacity);
+		// 	// writer.Write(MaxExtract);
+		// 	// writer.Write(MaxReceive);
+		// }
+		//
+		// public void Read(BinaryReader reader)
+		// {
+		// 	Heat = reader.ReadUInt64();
+		// 	Capacity = reader.ReadUInt64();
+		// 	// MaxExtract = reader.ReadUInt64();
+		// 	// MaxReceive = reader.ReadUInt64();
+		// }
 
 		public override string ToString() => $"Heat: {Heat}/{Capacity}";
 	}

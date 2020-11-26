@@ -24,6 +24,18 @@ namespace ModularTools.Content.Items.Armor
 			item.defense = 1;
 		}
 
+		public override void AddRecipes()
+		{
+			CreateRecipe()
+				.AddIngredient(ItemID.DirtBlock)
+				.Register();
+		}
+		
 		public override bool IsArmorSet(Item head, Item body, Item legs) => body.type == ModContent.ItemType<ModularChestplate>() && legs.type == ModContent.ItemType<ModularLeggings>();
+		
+		public override void UpdateEquip(Player player)
+		{
+			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
+		}
 	}
 }

@@ -27,9 +27,16 @@ namespace ModularTools.Content.Items.Tools
 			item.pick = 40;
 		}
 
+		public override void AddRecipes()
+		{
+			CreateRecipe()
+				.AddIngredient(ItemID.DirtBlock)
+				.Register();
+		}
+
 		public override void UpdateInventory(Player player)
 		{
-			foreach (BaseModule module in InstalledModules) module.OnUpdate(this);
+			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
 		}
 
 		public override bool CanUseItem(Player player) => true;

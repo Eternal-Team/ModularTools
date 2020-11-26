@@ -1,4 +1,5 @@
 ﻿using ModularTools.Core;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -21,6 +22,18 @@ namespace ModularTools.Content.Items.Armor
 			item.value = 10000;
 			item.rare = ItemRarityID.Cyan;
 			item.defense = 1;
+		}
+		
+		public override void AddRecipes()
+		{
+			CreateRecipe()
+				.AddIngredient(ItemID.DirtBlock)
+				.Register();
+		}
+
+		public override void UpdateEquip(Player player)
+		{
+			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
 		}
 	}
 }
