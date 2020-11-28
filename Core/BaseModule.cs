@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using BaseLibrary.Utility;
-using ModularTools.Content;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -34,10 +33,10 @@ namespace ModularTools.Core
 		public override void SetupContent()
 		{
 			SetStaticDefaults();
-			
+
 			if (DisplayName.IsDefault())
 				DisplayName.SetDefault(Regex.Replace(Name, "([A-Z])", " $1").Trim());
-			
+
 			SetDefaults();
 		}
 
@@ -97,19 +96,16 @@ namespace ModularTools.Core
 
 		public virtual void OnInstalled(ModularItem item)
 		{
-			
 		}
 
 		public virtual void OnRemoved(ModularItem item)
 		{
-			
 		}
 
 		public virtual void OnUpdate(ModularItem item, Player player)
 		{
-			
 		}
-		
+
 		public virtual TagCompound Save() => null;
 
 		public virtual void Load(TagCompound tag)

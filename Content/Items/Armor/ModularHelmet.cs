@@ -1,4 +1,6 @@
-﻿using ModularTools.Core;
+﻿using System.Collections.Generic;
+using EnergyLibrary;
+using ModularTools.Core;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,6 +11,21 @@ namespace ModularTools.Content.Items.Armor
 	public class ModularHelmet : ModularItem
 	{
 		public override string Texture => ModularTools.AssetPath + "Textures/Armor/ModularHelmet";
+
+		public float insulation = 1000f;
+		
+		public override void OnCreate(ItemCreationContext context)
+		{
+			InstalledModules = new List<BaseModule>();
+			EnergyStorage = new EnergyStorage(0);
+			HeatStorage = new HeatStorage
+			{
+				Capacity = 2f * 500f,
+				Temperature = Utility.ToKelvin(37),
+				Area = 0.3f,
+				TransferCoefficient = 100f
+			};
+		}
 
 		public override void SetStaticDefaults()
 		{
@@ -30,9 +47,9 @@ namespace ModularTools.Content.Items.Armor
 				.AddIngredient(ItemID.DirtBlock)
 				.Register();
 		}
-		
+
 		public override bool IsArmorSet(Item head, Item body, Item legs) => body.type == ModContent.ItemType<ModularChestplate>() && legs.type == ModContent.ItemType<ModularLeggings>();
-		
+
 		public override void UpdateEquip(Player player)
 		{
 			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);

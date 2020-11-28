@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 
 namespace ModularTools.Content.Items.Tools
 {
+	// player <-> armor <-> environment
+	
 	public class ModularPickaxe : ModularItem
 	{
 		public override string Texture => ModularTools.AssetPath + "Textures/Items/ModularPickaxe";

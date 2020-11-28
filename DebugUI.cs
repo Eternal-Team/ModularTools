@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
+using ModularTools.Content.Items.Armor;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -33,6 +34,17 @@ namespace ModularTools
 						float surface = (float)(Main.worldSurface * 2 - MathUtility.Lerp((Main.maxTilesY - 1200) / 1200f, 150, 250));
 						MTPlayer.Layer layer = MTPlayer.GetLayer(player.player, surface, out int depth);
 						DebugPrint($"Depth: {depth} ft");
+
+						DebugPrint($"");
+
+						
+						if(!Main.LocalPlayer.armor[0].IsAir && Main.LocalPlayer.armor[0].modItem is ModularHelmet helmet)
+							DebugPrint($"Helmet temperature: {Utility.ToDegrees(helmet.HeatStorage.Temperature):F1} C");
+						if(!Main.LocalPlayer.armor[1].IsAir && Main.LocalPlayer.armor[1].modItem is ModularChestplate chestplate)
+							DebugPrint($"Chestplate temperature: {Utility.ToDegrees(chestplate.HeatStorage.Temperature):F1} C");
+						if(!Main.LocalPlayer.armor[2].IsAir && Main.LocalPlayer.armor[2].modItem is ModularLeggings leggings)
+							DebugPrint($"Leggings temperature: {Utility.ToDegrees(leggings.HeatStorage.Temperature):F1} C");
+
 
 						void DebugPrint(string text)
 						{

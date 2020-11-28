@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseLibrary.Utility;
 using Terraria.ModLoader.IO;
 
 namespace ModularTools.Core
@@ -78,60 +79,6 @@ namespace ModularTools.Core
 			if (Heat < 0) Heat = 0;
 		}
 
-		// public void SetMaxTransfer(ulong maxTransfer)
-		// {
-		// SetMaxReceive(maxTransfer);
-		// SetMaxExtract(maxTransfer);
-		// }
-
-		// public void SetMaxReceive(ulong maxReceive)
-		// {
-		// MaxReceive = maxReceive;
-		// }
-
-		// public void SetMaxExtract(ulong maxExtract)
-		// {
-		// MaxExtract = maxExtract;
-		// }
-
-		// public ulong InsertHeat(ulong amount)
-		// {
-		// 	ulong CurrentDelta = Math.Min(Capacity - Heat, amount);
-		// 	Heat += CurrentDelta;
-		//
-		// 	// DeltaBuffer.Enqueue(CurrentDelta);
-		// 	//
-		// 	// if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
-		// 	// {
-		// 	// 	DeltaBuffer.Dequeue();
-		// 	// 	AverageDelta = (long)DeltaBuffer.Average(i => i);
-		// 	// }
-		// 	// else AverageDelta = CurrentDelta;
-		// 	//
-		// 	// OnChanged?.Invoke();
-		//
-		// 	return CurrentDelta;
-		// }
-		//
-		// public ulong ExtractHeat(ulong amount)
-		// {
-		// 	ulong CurrentDelta = Math.Min(Heat, amount);
-		// 	Heat -= CurrentDelta;
-		//
-		// 	// DeltaBuffer.Enqueue(CurrentDelta);
-		// 	//
-		// 	// if (DeltaBuffer.Count > ModContent.GetInstance<EnergyLibraryConfig>().DeltaCacheSize)
-		// 	// {
-		// 	// 	DeltaBuffer.Dequeue();
-		// 	// 	AverageDelta = (long)DeltaBuffer.Average(i => i);
-		// 	// }
-		// 	// else AverageDelta = CurrentDelta;
-		// 	//
-		// 	// OnChanged?.Invoke();
-		//
-		// 	return CurrentDelta;
-		// }
-
 		public TagCompound Save() => new TagCompound
 		{
 			["Heat"] = Heat,
@@ -165,6 +112,35 @@ namespace ModularTools.Core
 		// }
 
 		public override string ToString() => $"Heat: {Heat}/{Capacity}";
+
+		public float TransferTo(HeatStorage storage, float insulation)
+		{
+			float canAccept = storage.Area * storage.TransferCoefficient;
+			float canSend = Area * TransferCoefficient;
+			float transfer = MathUtility.Min(canAccept, canSend, storage.Heat, Heat);
+
+			float delta = storage.Temperature - Temperature;
+
+			float transfered = transfer * -delta;
+
+			if (transfer>0)
+			{
+				transfered -= insulation;
+				if (transfered < 0f) transfered = 0f;
+			}
+			else
+			{
+				transfered += insulation;
+				if (transfered > 0f) transfered = 0f;
+			}
+			
+			
+			
+			storage.Heat += transfered;
+			Heat -= transfered;
+
+			return transfered;
+		}
 	}
 
 	public interface IHeatStorage

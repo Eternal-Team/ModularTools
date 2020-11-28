@@ -1,4 +1,6 @@
-﻿using ModularTools.Core;
+﻿using System.Collections.Generic;
+using EnergyLibrary;
+using ModularTools.Core;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,6 +12,21 @@ namespace ModularTools.Content.Items.Armor
 	{
 		public override string Texture => ModularTools.AssetPath + "Textures/Armor/ModularLeggings";
 
+		public float insulation = 1000f;
+
+		public override void OnCreate(ItemCreationContext context)
+		{
+			InstalledModules = new List<BaseModule>();
+			EnergyStorage = new EnergyStorage(0);
+			HeatStorage = new HeatStorage
+			{
+				Capacity = 7f * 500f,
+				Temperature = Utility.ToKelvin(37),
+				Area = 0.6f,
+				TransferCoefficient = 100f
+			};
+		}
+		
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Modular Leggings");
@@ -23,7 +40,7 @@ namespace ModularTools.Content.Items.Armor
 			item.rare = ItemRarityID.Cyan;
 			item.defense = 1;
 		}
-		
+
 		public override void AddRecipes()
 		{
 			CreateRecipe()

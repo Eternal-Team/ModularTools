@@ -1,5 +1,6 @@
 ﻿using System;
 using BaseLibrary.Utility;
+using ModularTools.Content.Items.Armor;
 using Terraria;
 using Terraria.ID;
 
@@ -7,6 +8,11 @@ namespace ModularTools
 {
 	public partial class MTPlayer
 	{
+		public bool WearingModularSet =>
+			!player.armor[0].IsAir && player.armor[0].modItem is ModularHelmet &&
+			!player.armor[1].IsAir && player.armor[1].modItem is ModularChestplate &&
+			!player.armor[2].IsAir && player.armor[2].modItem is ModularLeggings;
+
 		public float AmbientTemperature;
 		public float heatBalancing;
 
@@ -28,7 +34,25 @@ namespace ModularTools
 				else AmbientTemperature = MathUtility.Map(depth, -safeZone, -surface, Utility.ToKelvin(10f), Utility.ToKelvin(-50f));
 			}
 
-			float transfered = PlayerHeat.TransferToEnvironment(AmbientTemperature, 1f);
+			float transfered;
+			if (WearingModularSet)
+			{
+				ModularHelmet helmet = (ModularHelmet)player.armor[0].modItem;
+				ModularChestplate chestplate = (ModularChestplate)player.armor[1].modItem;
+				ModularLeggings leggings = (ModularLeggings)player.armor[2].modItem;
+
+				helmet.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
+				chestplate.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
+				leggings.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
+
+				transfered = helmet.HeatStorage.TransferTo(PlayerHeat, helmet.insulation);
+				transfered += chestplate.HeatStorage.TransferTo(PlayerHeat, chestplate.insulation);
+				transfered += leggings.HeatStorage.TransferTo(PlayerHeat, leggings.insulation);
+			}
+			else
+			{
+				transfered = PlayerHeat.TransferToEnvironment(AmbientTemperature, 1f);
+			}
 
 			// heating
 			heatBalancing = 120f;

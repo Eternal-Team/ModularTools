@@ -25,7 +25,13 @@ namespace ModularTools.Core
 		{
 			InstalledModules = new List<BaseModule>();
 			EnergyStorage = new EnergyStorage(0);
-			// HeatStorage = new HeatStorage(100);
+			HeatStorage = new HeatStorage
+			{
+				Capacity = 1f,
+				Temperature = Utility.ToKelvin(0f),
+				Area = 1f,
+				TransferCoefficient = 0f
+			};
 		}
 
 		public override ModItem Clone(Item item)
@@ -33,13 +39,14 @@ namespace ModularTools.Core
 			ModularItem modularItem = (ModularItem)base.Clone(item);
 			modularItem.InstalledModules = new List<BaseModule>(InstalledModules);
 			modularItem.EnergyStorage = EnergyStorage.Clone();
+			modularItem.HeatStorage = HeatStorage.Clone();
 			return modularItem;
 		}
 
 		public override TagCompound Save() => new TagCompound
 		{
 			["Modules"] = InstalledModules,
-			["Energy"] = EnergyStorage.Save(),
+			["Energy"] = EnergyStorage.Save()
 			// ["Heat"] = HeatStorage.Save(),
 		};
 

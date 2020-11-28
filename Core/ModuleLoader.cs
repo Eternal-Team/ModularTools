@@ -9,7 +9,7 @@ namespace ModularTools.Core
 
 		internal static Dictionary<int, List<int>> validItemsForModule = new Dictionary<int, List<int>>();
 		internal static Dictionary<int, List<int>> validModulesForItem = new Dictionary<int, List<int>>();
-		
+
 		internal static Dictionary<int, List<int>> requirements = new Dictionary<int, List<int>>();
 
 		internal static int NextTypeID;
@@ -20,7 +20,7 @@ namespace ModularTools.Core
 			modules.Add(module);
 
 			validItemsForModule.Add(module.Type, new List<int>());
-			
+
 			requirements.Add(module.Type, new List<int>());
 		}
 
