@@ -7,6 +7,8 @@ namespace ModularTools.Content.Modules
 {
 	public class TestModule1 : BaseModule
 	{
+		public override string Texture => BaseLibrary.BaseLibrary.PlaceholderTexture;
+
 		public int testInt;
 
 		public override void SetStaticDefaults()

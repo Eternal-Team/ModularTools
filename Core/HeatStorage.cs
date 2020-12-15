@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using BaseLibrary.Utility;
 using Terraria.ModLoader.IO;
 
@@ -8,7 +9,7 @@ namespace ModularTools.Core
 	{
 		public float Heat;
 
-		public float Temperature
+		public float Temperature // K
 		{
 			get => Heat / Capacity;
 			set => Heat = Capacity * value;
@@ -20,33 +21,9 @@ namespace ModularTools.Core
 
 		public float CoolingCoefficient => TransferCoefficient * Area / Capacity;
 
-		// public ulong MaxExtract { get; private set; }
-		// public ulong MaxReceive { get; private set; }
-
 		internal HeatStorage()
 		{
 		}
-
-		// public HeatStorage(ulong capacity)
-		// {
-		// 	Capacity = capacity;
-		// 	// MaxReceive = capacity;
-		// 	// MaxExtract = capacity;
-		// }
-		//
-		// public HeatStorage(ulong capacity, ulong maxTransfer)
-		// {
-		// 	Capacity = capacity;
-		// 	// MaxReceive = maxTransfer;
-		// 	// MaxExtract = maxTransfer;
-		// }
-		//
-		// public HeatStorage(ulong capacity, ulong maxReceive, ulong maxExtract)
-		// {
-		// 	Capacity = capacity;
-		// 	// MaxReceive = maxReceive;
-		// 	// MaxExtract = maxExtract;
-		// }
 
 		public HeatStorage Clone()
 		{
@@ -82,34 +59,34 @@ namespace ModularTools.Core
 		public TagCompound Save() => new TagCompound
 		{
 			["Heat"] = Heat,
-			["Capacity"] = Capacity
-			// ["MaxExtract"] = MaxExtract,
-			// ["MaxReceive"] = MaxReceive
+			["Capacity"] = Capacity,
+			["TransferCoefficient"] = TransferCoefficient,
+			["Area"] = Area
 		};
 
 		public void Load(TagCompound tag)
 		{
 			Heat = tag.Get<float>("Heat");
 			Capacity = tag.Get<float>("Capacity");
-			// MaxExtract = tag.Get<ulong>("MaxExtract");
-			// MaxReceive = tag.Get<ulong>("MaxReceive");
+			TransferCoefficient = tag.Get<float>("TransferCoefficient");
+			Area = tag.Get<float>("Area");
 		}
 
-		// public void Write(BinaryWriter writer)
-		// {
-		// 	writer.Write(Heat);
-		// 	writer.Write(Capacity);
-		// 	// writer.Write(MaxExtract);
-		// 	// writer.Write(MaxReceive);
-		// }
-		//
-		// public void Read(BinaryReader reader)
-		// {
-		// 	Heat = reader.ReadUInt64();
-		// 	Capacity = reader.ReadUInt64();
-		// 	// MaxExtract = reader.ReadUInt64();
-		// 	// MaxReceive = reader.ReadUInt64();
-		// }
+		public void Write(BinaryWriter writer)
+		{
+			writer.Write(Heat);
+			writer.Write(Capacity);
+			writer.Write(TransferCoefficient);
+			writer.Write(Area);
+		}
+
+		public void Read(BinaryReader reader)
+		{
+			Heat = reader.ReadSingle();
+			Capacity = reader.ReadSingle();
+			TransferCoefficient = reader.ReadSingle();
+			Area = reader.ReadSingle();
+		}
 
 		public override string ToString() => $"Heat: {Heat}/{Capacity}";
 
@@ -123,7 +100,7 @@ namespace ModularTools.Core
 
 			float transfered = transfer * -delta;
 
-			if (transfer>0)
+			if (transfer > 0)
 			{
 				transfered -= insulation;
 				if (transfered < 0f) transfered = 0f;
@@ -133,9 +110,7 @@ namespace ModularTools.Core
 				transfered += insulation;
 				if (transfered > 0f) transfered = 0f;
 			}
-			
-			
-			
+
 			storage.Heat += transfered;
 			Heat -= transfered;
 

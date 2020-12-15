@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary;
+using BaseLibrary.Utility;
 using EnergyLibrary;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -43,21 +46,35 @@ namespace ModularTools.Core
 			return modularItem;
 		}
 
+		public override void ModifyTooltips(List<TooltipLine> tooltips)
+		{
+			tooltips.Add(new TooltipLine(Mod, "MT:Energy", TextUtility.WithColor($"Energy: {EnergyStorage.Energy}/{EnergyStorage.Capacity} J", new Color(28, 218, 232))));
+			tooltips.Add(new TooltipLine(Mod, "MT:Heat", TextUtility.WithColor($"Temperature: {Math.Round(HeatStorage.Temperature)}", new Color(255, 91, 20)) + "\n" +
+			                                             TextUtility.WithColor($"Transfering: {Math.Round(HeatStorage.TransferCoefficient * HeatStorage.Area, 1)} W", new Color(185, 255, 20))));
+			tooltips.Add(new TooltipLine(Mod, "MT:Modules", $"{InstalledModules.Count} installed modules"));
+		}
+
 		public override TagCompound Save() => new TagCompound
 		{
 			["Modules"] = InstalledModules,
-			["Energy"] = EnergyStorage.Save()
-			// ["Heat"] = HeatStorage.Save(),
+			["Energy"] = EnergyStorage.Save(),
+			["Heat"] = HeatStorage.Save()
 		};
 
 		public override void Load(TagCompound tag)
 		{
 			InstalledModules = tag.GetList<BaseModule>("Modules").ToList();
 			EnergyStorage.Load(tag.GetCompound("Energy"));
-			// HeatStorage.Load(tag.GetCompound("Heat"));
+			HeatStorage.Load(tag.GetCompound("Heat"));
 		}
 
 		public EnergyStorage GetEnergyStorage() => EnergyStorage;
+
 		public HeatStorage GetHeatStorage() => HeatStorage;
+
+		public bool IsInstalled(int moduleType)
+		{
+			return InstalledModules.Any(module => module.Type == moduleType);
+		}
 	}
 }

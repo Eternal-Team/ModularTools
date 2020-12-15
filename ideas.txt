@@ -1,12 +1,14 @@
 mechanics
     energy - you need energy to function
     heat - each component generates heat, too much heat damages tools/armor and player
+    insulation - protects you from low/high heat
 
 environmental effects
-    heat - based on height (space - extreme cold, hell - extreme heat)
+    ✓ heat - based on height (space - extreme cold, hell - extreme heat)
+    ✓ desert/beach = high temperature
     medium rock layer - dangerous gases
     jungle - poisonous atmosphere
-    ice biome - low temperatures
+    ✓ ice biome - low temperatures
     underground ice biome - very low temperatures
     water - electrocution
 

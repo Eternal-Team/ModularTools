@@ -14,7 +14,7 @@ namespace ModularTools.Content.Items.Tools
 		public override void SetDefaults()
 		{
 			item.damage = 20;
-			item.DamageType = DamageClass.Melee;
+			item.DamageType = ModContent.GetInstance<ModularDamageClass>();
 			item.width = 40;
 			item.height = 40;
 			item.useTime = 10;
@@ -43,7 +43,7 @@ namespace ModularTools.Content.Items.Tools
 
 		public override bool CanUseItem(Player player) => true;
 
-		public override bool UseItem(Player player)
+		public override bool? UseItem(Player player)
 		{
 			foreach (int module in ModuleLoader.validModulesForItem[Type])
 			{

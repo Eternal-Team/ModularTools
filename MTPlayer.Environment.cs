@@ -24,7 +24,7 @@ namespace ModularTools
 			float safeZone = 200f;
 
 			// safe zone 
-			AmbientTemperature = Utility.ToKelvin(20F);
+			AmbientTemperature = Utility.ToKelvin(20f);
 			if (Math.Abs(depth) < safeZone) AmbientTemperature = Utility.ToKelvin(20f) + Math.Sign(depth) * MathUtility.Map(Math.Abs(depth), 0, safeZone, 0f, 10f);
 			else
 			{
@@ -32,6 +32,19 @@ namespace ModularTools
 				if (depth > 0) AmbientTemperature = MathUtility.Map(depth, safeZone, Main.maxTilesY * 2 - surface, Utility.ToKelvin(30f), Utility.ToKelvin(700f));
 				// above ground
 				else AmbientTemperature = MathUtility.Map(depth, -safeZone, -surface, Utility.ToKelvin(10f), Utility.ToKelvin(-50f));
+			}
+
+			if (player.ZoneSnow)
+			{
+				AmbientTemperature -= 50f;
+			}
+			else if (player.ZoneDesert || player.ZoneBeach)
+			{
+				AmbientTemperature += 20f;
+			}
+			else if (player.ZoneJungle)
+			{
+				AmbientTemperature += 10f;
 			}
 
 			float transfered;

@@ -23,7 +23,7 @@ namespace ModularTools.Content.Items.Armor
 				Capacity = 2f * 500f,
 				Temperature = Utility.ToKelvin(37),
 				Area = 0.3f,
-				TransferCoefficient = 100f
+				TransferCoefficient = 5f
 			};
 		}
 
