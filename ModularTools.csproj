@@ -18,4 +18,7 @@
     <None Remove="README.md" />
     <None Remove=".gitignore" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\Projectiles" />
+  </ItemGroup>
 </Project>

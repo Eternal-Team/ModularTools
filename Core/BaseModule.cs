@@ -18,13 +18,12 @@ namespace ModularTools.Core
 
 		#region Loading
 		private static MethodInfo GetOrCreateTranslation = typeof(Mod).GetMethod("GetOrCreateTranslation", ReflectionUtility.DefaultFlags);
-		private static MethodInfo ModTypeLookupRegister = typeof(ModLoader).Assembly.GetType("Terraria.ModLoader.ModTypeLookup`1").MakeGenericType(typeof(BaseModule)).GetMethod("Register", ReflectionUtility.DefaultFlags_Static);
 
 		protected override void Register()
 		{
 			ModuleLoader.RegisterModule(this);
 
-			ModTypeLookupRegister.Invoke(null, this);
+			ModTypeLookup<BaseModule>.Register(this);
 
 			DisplayName = GetOrCreateTranslation.Invoke<ModTranslation>(Mod, $"Mods.{Mod.Name}.ModuleName.{Name}", false);
 			Tooltip = GetOrCreateTranslation.Invoke<ModTranslation>(Mod, $"Mods.{Mod.Name}.ModuleTooltip.{Name}", true);
