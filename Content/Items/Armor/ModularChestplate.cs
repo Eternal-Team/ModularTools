@@ -15,7 +15,7 @@ namespace ModularTools.Content.Items.Armor
 		public override string FemaleTexture => ModularTools.AssetPath + "Textures/Armor/ModularChestplate_Female";
 
 		public float insulation = 1000f;
-		
+
 		public override void OnCreate(ItemCreationContext context)
 		{
 			InstalledModules = new List<BaseModule>();
@@ -28,7 +28,7 @@ namespace ModularTools.Content.Items.Armor
 				TransferCoefficient = 5f
 			};
 		}
-		
+
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Modular Chestplate");

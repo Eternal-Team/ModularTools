@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ModularTools.Core;
@@ -51,17 +50,14 @@ namespace ModularTools.Content.Items.Tools
 
 	public class poop : PlayerDrawLayer
 	{
-		public override PlayerDrawLayer Parent => HeldItemBehindFrontArm;
-
 		public override bool GetDefaultVisiblity(PlayerDrawSet drawInfo)
 		{
 			return drawInfo.drawPlayer.HeldItem?.type == ModContent.ItemType<ModularDrill>();
 		}
 
-		public override IEnumerable<LayerConstraint> GetConstraints()
+		public override Position GetDefaultPosition()
 		{
-			yield return LayerConstraint.After(HeldItemBehindFrontArm);
-			yield return LayerConstraint.Before(ArmOverItem);
+			return new BeforeParent(PlayerDrawLayers.ArmOverItem);
 		}
 
 		protected override void Draw(ref PlayerDrawSet drawInfo)
@@ -77,7 +73,6 @@ namespace ModularTools.Content.Items.Tools
 
 			Vector2 bodyVect = drawInfo.bodyVect;
 			Vector2 compositeOffset_FrontArm = new Vector2(-5 * (!drawInfo.playerEffect.HasFlag(SpriteEffects.FlipHorizontally) ? 1 : -1), 0f);
-			;
 			bodyVect += compositeOffset_FrontArm;
 
 			Main.NewText(drawInfo.frontShoulderOffset);
@@ -88,10 +83,6 @@ namespace ModularTools.Content.Items.Tools
 			value.Y -= 2f;
 			vector += value * -drawInfo.playerEffect.HasFlag(SpriteEffects.FlipVertically).ToDirectionInt();
 			float bodyRotation = drawInfo.drawPlayer.bodyRotation;
-			// float rotation = drawInfo.drawPlayer.bodyRotation + drawInfo.compositeFrontArmRotation;
-			// Vector2 bodyVect = drawInfo.bodyVect;
-			// Vector2 compositeOffset_FrontArm = GetCompositeOffset_FrontArm(ref drawInfo);
-			// bodyVect += compositeOffset_FrontArm;
 			vector += compositeOffset_FrontArm;
 			Vector2 pp = vector + drawInfo.frontShoulderOffset;
 			if (drawInfo.compFrontArmFrame.X / drawInfo.compFrontArmFrame.Width >= 7)

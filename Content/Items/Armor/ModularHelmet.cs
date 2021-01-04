@@ -13,7 +13,7 @@ namespace ModularTools.Content.Items.Armor
 		public override string Texture => ModularTools.AssetPath + "Textures/Armor/ModularHelmet";
 
 		public float insulation = 1000f;
-		
+
 		public override void OnCreate(ItemCreationContext context)
 		{
 			InstalledModules = new List<BaseModule>();

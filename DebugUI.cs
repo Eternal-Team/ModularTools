@@ -35,14 +35,14 @@ namespace ModularTools
 						MTPlayer.Layer layer = MTPlayer.GetLayer(player.player, surface, out int depth);
 						DebugPrint($"Depth: {depth} ft");
 
-						DebugPrint($"");
+						DebugPrint("");
 
-						
-						if(!Main.LocalPlayer.armor[0].IsAir && Main.LocalPlayer.armor[0].modItem is ModularHelmet helmet)
+
+						if (!Main.LocalPlayer.armor[0].IsAir && Main.LocalPlayer.armor[0].modItem is ModularHelmet helmet)
 							DebugPrint($"Helmet temperature: {Utility.ToDegrees(helmet.HeatStorage.Temperature):F1} C");
-						if(!Main.LocalPlayer.armor[1].IsAir && Main.LocalPlayer.armor[1].modItem is ModularChestplate chestplate)
+						if (!Main.LocalPlayer.armor[1].IsAir && Main.LocalPlayer.armor[1].modItem is ModularChestplate chestplate)
 							DebugPrint($"Chestplate temperature: {Utility.ToDegrees(chestplate.HeatStorage.Temperature):F1} C");
-						if(!Main.LocalPlayer.armor[2].IsAir && Main.LocalPlayer.armor[2].modItem is ModularLeggings leggings)
+						if (!Main.LocalPlayer.armor[2].IsAir && Main.LocalPlayer.armor[2].modItem is ModularLeggings leggings)
 							DebugPrint($"Leggings temperature: {Utility.ToDegrees(leggings.HeatStorage.Temperature):F1} C");
 
 

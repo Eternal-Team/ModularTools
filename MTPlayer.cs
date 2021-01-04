@@ -1,4 +1,5 @@
-﻿using ModularTools.Content.Items.Ingredients;
+﻿using BaseLibrary.UI;
+using ModularTools.Content.Items.Ingredients;
 using ModularTools.Core;
 using Terraria.DataStructures;
 using Terraria.GameInput;
@@ -25,13 +26,13 @@ namespace ModularTools
 		{
 			if (ModularTools.Instance.hotKey.JustPressed)
 			{
-				ref bool visible = ref UpgradeStationUISystem.Instance.upgradeState.Visible;
-				if (!visible)
+				ref Display display = ref UpgradeStationUISystem.Instance.upgradeState.Display;
+				if (display == Display.None)
 				{
-					UpgradeStationUISystem.Instance.upgradeState.OnInitialize();
-					visible = true;
+					display = Display.Visible;
+					UpgradeStationUISystem.Instance.upgradeState.Open();
 				}
-				else visible = false;
+				else display = Display.None;
 			}
 		}
 

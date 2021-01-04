@@ -26,7 +26,7 @@ namespace ModularTools.Content.Items.Armor
 				TransferCoefficient = 5f
 			};
 		}
-		
+
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Modular Leggings");
