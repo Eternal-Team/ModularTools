@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace ModularTools.Content.Items.Tools
 {
-	public class ModularDrill : ModularItem
+	public class ModularBore : ModularItem
 	{
 		public override string Texture => ModularTools.AssetPath + "Textures/Items/ModularDrill";
 
@@ -50,19 +50,13 @@ namespace ModularTools.Content.Items.Tools
 
 	public class poop : PlayerDrawLayer
 	{
-		public override bool GetDefaultVisiblity(PlayerDrawSet drawInfo)
-		{
-			return drawInfo.drawPlayer.HeldItem?.type == ModContent.ItemType<ModularDrill>();
-		}
+		public override bool GetDefaultVisiblity(PlayerDrawSet drawInfo) => drawInfo.drawPlayer.HeldItem?.type == ModContent.ItemType<ModularBore>();
 
-		public override Position GetDefaultPosition()
-		{
-			return new BeforeParent(PlayerDrawLayers.ArmOverItem);
-		}
+		public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.ArmOverItem);
 
 		protected override void Draw(ref PlayerDrawSet drawInfo)
 		{
-			Texture2D texture = TextureAssets.Item[ModContent.ItemType<ModularDrill>()].Value;
+			Texture2D texture = TextureAssets.Item[ModContent.ItemType<ModularBore>()].Value;
 			Player player = drawInfo.drawPlayer;
 
 			Vector2 position = drawInfo.Center + new Vector2(player.direction == -1 ? 8f : -8f, -2f) - Main.screenPosition;
