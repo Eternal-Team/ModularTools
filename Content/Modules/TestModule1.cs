@@ -17,7 +17,7 @@ namespace ModularTools.Content.Modules
 
 			AddRequiredModule<CopperPlating>();
 
-			AddValidModularItem<ModularDrill>();
+			AddValidModularItem<ModularBore>();
 		}
 
 		public override void AddRecipes()

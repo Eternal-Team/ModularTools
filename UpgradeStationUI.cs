@@ -1,57 +1,88 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BaseLibrary.UI;
 using Microsoft.Xna.Framework;
 using ModularTools.Core;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace ModularTools
 {
 	public class UpgradeStationUI : BaseState
 	{
+		private UIPanel panel;
 		private UIPanel modulePanel;
 
 		public UpgradeStationUI()
 		{
-			UIDraggablePanel panel = new UIDraggablePanel
+			With(() =>
 			{
-				Width = { Pixels = 1000 },
-				Height = { Pixels = 550 },
-				X = { Percent = 50 },
-				Y = { Percent = 50 }
-			};
-			Add(panel);
+				panel = new UIPanel
+				{
+					Settings =
+					{
+						Draggable = true,
+						DragZones = new List<DragZone> { DragZone.TopBorder }
+					},
+					Width = { Pixels = 1000 },
+					Height = { Pixels = 550 },
+					X = { Percent = 50 },
+					Y = { Percent = 50 }
+				};
+				Add(panel);
 
-			modulePanel = new UIPanel
+				panel.With(() =>
+				{
+					modulePanel = new UIPanel
+					{
+						Width = { Pixels = 1000 - 58 - 16 },
+						Height = { Percent = 100 },
+						X = { Pixels = 58 }
+					};
+					panel.Add(modulePanel);
+				});
+			});
+		}
+
+		public void Open()
+		{
+			int y = 0;
+			foreach (Item item in Main.LocalPlayer.inventory.Concat(Main.LocalPlayer.armor))
 			{
-				Width = { Pixels = 1000 - 58 - 16 },
-				Height = { Percent = 100 },
-				X = { Pixels = 58 }
-			};
-			panel.Add(modulePanel);
+				if (item.IsAir) continue;
 
-			// int y = 0;
-			// foreach (Item item in Main.LocalPlayer.inventory.Concat(Main.LocalPlayer.armor))
-			// {
-			// 	if (item.IsAir) continue;
-			//
-			// 	if (item.modItem is ModularItem modularItem)
-			// 	{
-			// 		UIPanel mPanel = new UIPanel();
-			// 		mPanel.Width.Set(50f, 0f);
-			// 		mPanel.Height.Set(50f, 0f);
-			// 		mPanel.Top.Set(50f * y++, 0f);
-			// 		mPanel.SetPadding(8);
-			// 		mPanel.OnClick += (evt, element) => OpenItem(modularItem);
-			// 		panel.Append(mPanel);
-			//
-			// 		Main.instance.LoadItem(modularItem.Type);
-			// 		UIImage image = new UIImage(TextureAssets.Item[modularItem.Type]) { ScaleToFit = true };
-			// 		image.Width.Set(0f, 100f);
-			// 		image.Height.Set(0f, 100f);
-			// 		mPanel.Append(image);
-			// 	}
-			// }
+				if (item.modItem is ModularItem modularItem)
+				{
+					UIPanel mPanel = new UIPanel
+					{
+						Width = { Pixels = 50 },
+						Height = { Pixels = 50 },
+						Y = { Pixels = 58 * y++ },
+						Padding = new Padding(8)
+					};
+					mPanel.OnClick += args =>
+					{
+						args.Handled = true;
+						OpenItem(modularItem);
+					};
+					panel.Add(mPanel);
+
+					Main.instance.LoadItem(modularItem.Type);
+					UITexture image = new UITexture(TextureAssets.Item[modularItem.Type].Value)
+					{
+						Width = { Percent = 100 },
+						Height = { Percent = 100 },
+						Settings =
+						{
+							ScaleMode = ScaleMode.Zoom,
+							ImageX = { Percent = 50 },
+							ImageY = { Percent = 50 }
+						}
+					};
+					mPanel.Add(image);
+				}
+			}
 		}
 
 		private void OpenItem(ModularItem item)
@@ -65,7 +96,7 @@ namespace ModularTools
 
 				UIPanel mPanel = new UIPanel
 				{
-					BorderColor = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red,
+					Settings = { BorderColor = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red },
 					Width = { Pixels = 400 },
 					Height = { Pixels = 64 },
 					Y = { Pixels = 72 * y++ }
@@ -85,29 +116,33 @@ namespace ModularTools
 						clone.OnInstalled(item);
 					}
 
-					mPanel.BorderColor = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red;
+					mPanel.Settings.BorderColor = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red;
 
 					args.Handled = true;
 				};
 				modulePanel.Add(mPanel);
 
-				// UIImage image = new UIImage(ModContent.GetTexture(module.Texture));
-				// image.ScaleToFit = true;
-				// image.Width.Set(48f, 0f);
-				// image.Height.Set(48f, 0f);
-				// mPanel.Append(image);
-				//
-				// UIText text = new UIText(module.DisplayName.GetDefault() + "\n" + module.Tooltip.GetDefault()) { TextOriginX = 0f };
-				// text.Left.Set(56f, 0f);
-				// text.Width.Set(-56f, 100f);
-				// text.Height.Set(0f, 100f);
-				// mPanel.Append(text);
-			}
-		}
+				UITexture image = new UITexture(ModContent.GetTexture(module.Texture).Value)
+				{
+					Width = { Pixels = 48 },
+					Height = { Pixels = 48 },
+					Settings =
+					{
+						ScaleMode = ScaleMode.Stretch,
+						ImageX = { Percent = 50 },
+						ImageY = { Percent = 50 }
+					}
+				};
+				mPanel.Add(image);
 
-		public void Open()
-		{
-			
+				UIText text = new UIText(module.DisplayName.GetDefault() + "\n" + module.Tooltip.GetDefault())
+				{
+					Width = { Pixels = -56, Percent = 100 },
+					Height = { Percent = 100 },
+					X = { Pixels = 56 }
+				};
+				mPanel.Add(text);
+			}
 		}
 	}
 
