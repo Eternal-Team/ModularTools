@@ -26,11 +26,16 @@ namespace ModularTools
 		{
 			if (ModularTools.Instance.hotKey.JustPressed)
 			{
-				ref Display display = ref UpgradeStationUISystem.Instance.upgradeState.Display;
+				ref UpgradeStationUI ui = ref UpgradeStationUISystem.Instance.upgradeState;
+				ref Display display = ref ui.Display;
+				
 				if (display == Display.None)
 				{
-					display = Display.Visible;
-					UpgradeStationUISystem.Instance.upgradeState.Open();
+					UILayer.Instance.Remove(ui);
+					ui = new UpgradeStationUI { Display = Display.Visible };
+					ui.Recalculate();
+					UILayer.Instance.Add(ui);
+					ui.Open();
 				}
 				else display = Display.None;
 			}
