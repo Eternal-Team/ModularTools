@@ -36,8 +36,8 @@ namespace ModularTools.Content.Items.Armor
 
 		public override void SetDefaults()
 		{
-			item.width = 18;
-			item.height = 18;
+			item.width = 26;
+			item.height = 20;
 			item.value = 10000;
 			item.rare = ItemRarityID.Cyan;
 			item.defense = 1;
