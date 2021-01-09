@@ -88,19 +88,28 @@ namespace ModularTools
 				};
 				panel.Add(modulePanel);
 
+				UIPanel inputBG = new UIPanel
+				{
+					Width = { Percent = 100 },
+					Height = { Pixels = 36 },
+					Settings = { BorderColor = Color.Transparent }
+				};
+				modulePanel.Add(inputBG);
+
 				UITextInput input = new UITextInput(ref search)
 				{
 					Width = { Percent = 100 },
-					Height = { Pixels = 28 },
-					OnTextChange = () => gridModules.Search()
+					Height = { Percent = 100 },
+					OnTextChange = () => gridModules.Search(),
+					Settings = { HintText = "<Search>" }
 				};
-				modulePanel.Add(input);
+				inputBG.Add(input);
 
 				gridModules = new UIGrid<UIModule>
 				{
 					Width = { Percent = 100 },
-					Height = { Percent = 100, Pixels = -36 },
-					Y = { Pixels = 36 },
+					Height = { Percent = 100, Pixels = -44 },
+					Y = { Pixels = 44 },
 					SearchSelector = item => string.IsNullOrWhiteSpace(search.Value) || TextUtility.Search(item.module.DisplayName.Get().ToLower(), search.Value.ToLower()).Any()
 				};
 				modulePanel.Add(gridModules);
@@ -169,14 +178,12 @@ namespace ModularTools
 					if (item.IsInstalled(module.Type))
 					{
 						BaseModule clone = item.InstalledModules.First(x => x.Type == module.Type);
-						item.InstalledModules.Remove(clone);
-						clone.OnRemoved(item);
+						clone.InternalRemove(item);
 					}
 					else
 					{
 						BaseModule clone = module.Clone();
-						item.InstalledModules.Add(clone);
-						clone.OnInstalled(item);
+						clone.InternalInstall(item);
 					}
 
 					uiModule.Color = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red;

@@ -50,6 +50,9 @@ namespace ModularTools.Core
 		}
 		#endregion
 
+		public int EnergyCapacity;
+		public int HeatCapacity;
+
 		public virtual BaseModule Clone() => (BaseModule)MemberwiseClone();
 
 		protected void AddRequiredModule<T>() where T : BaseModule
@@ -91,6 +94,22 @@ namespace ModularTools.Core
 
 		public virtual void AddRecipes()
 		{
+		}
+
+		internal void InternalInstall(ModularItem item)
+		{
+			item.InstalledModules.Add(this);
+			
+			item.HeatStorage.ModifyCapacity(HeatCapacity);
+			item.EnergyStorage.ModifyCapacity(EnergyCapacity);
+		}
+		
+		internal void InternalRemove(ModularItem item)
+		{
+			item.InstalledModules.Remove(this);
+			
+			item.HeatStorage.ModifyCapacity(-HeatCapacity);
+			item.EnergyStorage.ModifyCapacity(-EnergyCapacity);
 		}
 
 		public virtual void OnInstalled(ModularItem item)
