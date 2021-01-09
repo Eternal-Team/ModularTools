@@ -12,7 +12,7 @@ namespace ModularTools
 {
 	public class UIModularItem : BaseElement
 	{
-		private ModularItem modularItem;
+		public ModularItem modularItem;
 		private static Texture2D bg;
 		public bool selected;
 

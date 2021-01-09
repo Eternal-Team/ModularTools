@@ -11,81 +11,121 @@ namespace ModularTools
 {
 	public class UpgradeStationUI : BaseState
 	{
-		private UIPanel panel;
-
-		private UIPanel itemPanel;
-		private UIPanel modulePanel;
+		private UIGrid<UIModularItem> gridItems;
+		private UIGrid<UIModule> gridModules;
+		private Ref<string> search = new Ref<string>("");
 
 		public UpgradeStationUI()
 		{
-			With(() =>
+			UIPanel panel = new UIPanel
 			{
-				panel = new UIPanel
+				Width = { Pixels = 1000 },
+				Height = { Pixels = 550 + 28 },
+				X = { Percent = 50 },
+				Y = { Percent = 50 },
+				Settings =
 				{
-					Width = { Pixels = 1000 },
-					Height = { Pixels = 550 + 28 },
-					X = { Percent = 50 },
-					Y = { Percent = 50 },
+					Draggable = true,
+					DragZones = new List<DragZone> { new DragZone { Width = { Percent = 100 }, Height = { Pixels = 28 } } }
+				}
+			};
+			Add(panel);
+
+			panel.With(() =>
+			{
+				UIText title = new UIText("Upgrade Station")
+				{
+					Height = { Pixels = 20 }
+				};
+				panel.Add(title);
+
+				UIText closeButton = new UIText("X")
+				{
+					Height = { Pixels = 20 },
+					Width = { Pixels = 20 },
+					X = { Percent = 100 }
+				};
+				closeButton.OnClick += args =>
+				{
+					args.Handled = true;
+					Display = Display.None;
+				};
+				closeButton.OnMouseEnter += args => closeButton.Settings.TextColor = Color.Red;
+				closeButton.OnMouseLeave += args => closeButton.Settings.TextColor = Color.White;
+				panel.Add(closeButton);
+
+				UIPanel itemPanel = new UIPanel
+				{
+					Width = { Pixels = 64 },
+					Height = { Percent = 100, Pixels = -28 },
+					Y = { Pixels = 28 },
 					Settings =
 					{
-						Draggable = true,
-						DragZones = new List<DragZone> { new DragZone { Width = { Percent = 100 }, Height = { Pixels = 28 } } }
+						BorderColor = Color.Transparent,
+						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
 					}
 				};
-				Add(panel);
+				panel.Add(itemPanel);
 
-				panel.With(() =>
+				gridItems = new UIGrid<UIModularItem>
 				{
-					UIText title = new UIText("Upgrade Station")
-					{
-						Height = { Pixels = 20 }
-					};
-					panel.Add(title);
+					Width = { Percent = 100 },
+					Height = { Percent = 100 }
+				};
+				itemPanel.Add(gridItems);
 
-					UIText closeButton = new UIText("X")
+				UIPanel modulePanel = new UIPanel
+				{
+					Width = { Percent = 40, Pixels = -64 },
+					Height = { Percent = 100, Pixels = -28 },
+					X = { Pixels = 64 },
+					Y = { Pixels = 28 },
+					Settings =
 					{
-						Height = { Pixels = 20 },
-						Width = { Pixels = 20 },
-						X = { Percent = 100 }
-					};
-					closeButton.OnClick += args =>
-					{
-						args.Handled = true;
-						Display = Display.None;
-					};
-					closeButton.OnMouseEnter += args => closeButton.Settings.TextColor = Color.Red;
-					closeButton.OnMouseLeave += args => closeButton.Settings.TextColor = Color.White;
-					panel.Add(closeButton);
+						BorderColor = Color.Transparent,
+						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
+					}
+				};
+				panel.Add(modulePanel);
 
-					itemPanel = new UIPanel
-					{
-						Width = { Pixels = 64 },
-						Height = { Percent = 100, Pixels = -28 },
-						Y = { Pixels = 28 },
-						Settings =
-						{
-							BorderColor = Color.Transparent,
-							BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
-						}
-					};
-					panel.Add(itemPanel);
+				UITextInput input = new UITextInput(ref search)
+				{
+					Width = { Percent = 100 },
+					Height = { Pixels = 28 },
+					OnTextChange = () => gridModules.Search()
+				};
+				modulePanel.Add(input);
 
-					modulePanel = new UIPanel
+				gridModules = new UIGrid<UIModule>
+				{
+					Width = { Percent = 100 },
+					Height = { Percent = 100, Pixels = -36 },
+					Y = { Pixels = 36 },
+					SearchSelector = item => string.IsNullOrWhiteSpace(search.Value) || TextUtility.Search(item.module.DisplayName.Get().ToLower(), search.Value.ToLower()).Any()
+				};
+				modulePanel.Add(gridModules);
+
+				UIPanel infoPanel = new UIPanel
+				{
+					Width = { Percent = 60 },
+					Height = { Percent = 100, Pixels = -28 },
+					X = { Percent = 100 },
+					Y = { Pixels = 28 },
+					Settings =
 					{
-						Width = { Percent = 40 },
-						Height = { Percent = 100, Pixels = -28 },
-						X = { Pixels = 72 },
-						Y = { Pixels = 28 }
-					};
-					panel.Add(modulePanel);
-				});
+						BorderColor = Color.Transparent,
+						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
+					}
+				};
+				panel.Add(infoPanel);
 			});
 		}
 
 		public void Open()
 		{
-			int y = 0;
-			foreach (Item item in Main.LocalPlayer.inventory.Concat(Main.LocalPlayer.armor))
+			gridItems.Clear();
+
+			foreach (Item item in InventoryUtility.InvArmor(Main.LocalPlayer))
 			{
 				if (item.IsAir) continue;
 
@@ -94,38 +134,37 @@ namespace ModularTools
 					UIModularItem uiModularItem = new UIModularItem(modularItem)
 					{
 						Width = { Pixels = 48 },
-						Height = { Pixels = 48 },
-						Y = { Pixels = 58 * y++ }
+						Height = { Pixels = 48 }
 					};
 					uiModularItem.OnClick += args =>
 					{
 						args.Handled = true;
-						foreach (UIModularItem m in itemPanel.Children.OfType<UIModularItem>()) m.selected = false;
+
+						foreach (UIModularItem m in gridItems.Children.OfType<UIModularItem>()) m.selected = false;
 						uiModularItem.selected = true;
 						OpenItem(modularItem);
 					};
-					itemPanel.Add(uiModularItem);
+
+					gridItems.Add(uiModularItem);
 				}
 			}
 		}
 
 		private void OpenItem(ModularItem item)
 		{
-			modulePanel.Clear();
+			gridModules.Clear();
 
-			int y = 0;
 			foreach (int type in ModuleLoader.validModulesForItem[item.Type])
 			{
 				BaseModule module = ModuleLoader.modules[type];
 
-				UIPanel mPanel = new UIPanel
+				UIModule uiModule = new UIModule(module)
 				{
-					Settings = { BorderColor = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red },
-					Width = { Percent = 100},
-					Height = { Pixels = 64 },
-					Y = { Pixels = 72 * y++ }
+					Color = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red,
+					Width = { Percent = 100 },
+					Height = { Pixels = 64 }
 				};
-				mPanel.OnClick += args =>
+				uiModule.OnClick += args =>
 				{
 					if (item.IsInstalled(module.Type))
 					{
@@ -140,32 +179,11 @@ namespace ModularTools
 						clone.OnInstalled(item);
 					}
 
-					mPanel.Settings.BorderColor = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red;
+					uiModule.Color = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red;
 
 					args.Handled = true;
 				};
-				modulePanel.Add(mPanel);
-
-				UITexture image = new UITexture(ModContent.GetTexture(module.Texture).Value)
-				{
-					Width = { Pixels = 48 },
-					Height = { Pixels = 48 },
-					Settings =
-					{
-						ScaleMode = ScaleMode.Stretch,
-						ImageX = { Percent = 50 },
-						ImageY = { Percent = 50 }
-					}
-				};
-				mPanel.Add(image);
-
-				UIText text = new UIText(module.DisplayName.GetDefault() + "\n" + module.Tooltip.GetDefault())
-				{
-					Width = { Pixels = -56, Percent = 100 },
-					Height = { Percent = 100 },
-					X = { Pixels = 56 }
-				};
-				mPanel.Add(text);
+				gridModules.Add(uiModule);
 			}
 		}
 	}
