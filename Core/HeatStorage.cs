@@ -37,10 +37,14 @@ namespace ModularTools.Core
 			if (Heat > capacity) Heat = Capacity;
 		}
 
-		public void ModifyCapacity(long capacity)
+		public void ModifyCapacity(float capacity)
 		{
-			if (capacity < 0) Capacity -= Math.Min(Capacity, (ulong)capacity);
-			else Capacity += (ulong)capacity;
+			float temperature = Temperature;
+
+			Capacity += capacity;
+			if (Capacity < 0) Capacity = 0;
+
+			Heat = Capacity * temperature;
 		}
 
 		public float TransferToEnvironment(float environmentTemp, float timeStep)
