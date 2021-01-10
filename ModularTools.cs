@@ -6,6 +6,7 @@ namespace ModularTools
 	public class ModularTools : Mod
 	{
 		public const string AssetPath = "ModularTools/Assets/";
+		public const string TexturePath = "ModularTools/Assets/Textures/";
 
 		public static ModularTools Instance => ModContent.GetInstance<ModularTools>();
 
@@ -13,6 +14,8 @@ namespace ModularTools
 
 		public override void Load()
 		{
+			Hooking.Initialize();
+			
 			ModuleSerializer.Load();
 
 			hotKey = RegisterHotKey("Open Upgrade UI", "K");

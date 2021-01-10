@@ -105,6 +105,8 @@ namespace ModularTools
 				};
 				inputBG.Add(input);
 
+				// todo: category buttons
+
 				gridModules = new UIGrid<UIModule>
 				{
 					Width = { Percent = 100 },
