@@ -5,6 +5,7 @@ using BaseLibrary;
 using BaseLibrary.Utility;
 using EnergyLibrary;
 using Microsoft.Xna.Framework;
+using ModularTools.Content.Items.Armor;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -13,6 +14,11 @@ namespace ModularTools.Core
 {
 	public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 	{
+		public static class Group
+		{
+			public static readonly List<int> Armor = new List<int> { ModContent.ItemType<ModularHelmet>(), ModContent.ItemType<ModularChestplate>(), ModContent.ItemType<ModularLeggings>() };
+		}
+
 		public List<BaseModule> InstalledModules;
 		public EnergyStorage EnergyStorage;
 		public HeatStorage HeatStorage;

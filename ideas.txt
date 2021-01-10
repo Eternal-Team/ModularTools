@@ -1,5 +1,5 @@
 mechanics
-    energy - you need energy to function
+    ✓ energy - you need energy to function
     heat - each component generates heat, too much heat damages tools/armor and player
     insulation - protects you from low/high heat
 
@@ -15,18 +15,13 @@ environmental effects
 PRE-HM
 
 armor platings
-    copper - high heat dissapation, low defense
-    gold - medium heat dissapation, very low defense
-    aluminium - medium heat dissapation, medium defense
-    steel - low heat dissapation, very high defense
-    iron - low heat dissapation, high defense,
-    tungsten carbide - medium heat dissapation, extremely high defense
-    diamond doped tungsten carbine - very high heat dissapation, extremely high defense
+    4 - 25
 
-batteries
-    nickel-iron - low energy storage
-    lead-acid battery - medium energy storage (sulfur is obtained near lava lakes)
-    lithium iron phosphate - high energy storage
+    gold - medium heat dissapation 12, very low defense 3
+    aluminium - medium heat dissapation 12, medium defense 4
+    steel - low heat dissapation 11, very high defense 6
+    tungsten carbide - medium heat dissapation 13, extremely high defense 8
+    diamond doped tungsten carbine - very high heat dissapation 18, extremely high defense 9
 
 insulation
     insulation protects against cold, prevents heat from escaping

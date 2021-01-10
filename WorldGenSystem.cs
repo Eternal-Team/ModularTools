@@ -18,7 +18,7 @@ namespace ModularTools
 				x = MathUtility.Clamp(x, 1, Main.maxTilesX - 1);
 				y = MathUtility.Clamp(y, 1, Main.maxTilesY - 1);
 
-				if (Main.tile[x, y].active()) return false;
+				if (!Main.tile[x, y].IsAir) return false;
 
 				int found = 0;
 				const int checkSize = 3;
@@ -28,7 +28,7 @@ namespace ModularTools
 					{
 						if (i < 1 || i > Main.maxTilesX - 1 || j < 1 || j > Main.maxTilesY - 1) continue;
 
-						if (Main.tile[i, j] != null && Main.tile[i, j].active() && Main.tile[i, j].type == ModContent.TileType<Sulfur>()) found++;
+						if (Main.tile[i, j] != null && !Main.tile[i, j].IsAir && Main.tile[i, j].type == ModContent.TileType<Sulfur>()) found++;
 					}
 				}
 

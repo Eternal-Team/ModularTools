@@ -8,7 +8,7 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace ModularTools
+namespace ModularTools.UI
 {
 	public class UIModularItem : BaseElement
 	{

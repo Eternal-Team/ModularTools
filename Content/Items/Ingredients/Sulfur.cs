@@ -25,7 +25,7 @@ namespace ModularTools.Content.Items.Ingredients
 			item.autoReuse = true;
 			item.rare = ItemRarityID.Blue;
 		}
-		
+
 		public override void AddRecipes()
 		{
 			CreateRecipe()

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ModularTools.Content.Tiles
@@ -37,10 +38,10 @@ namespace ModularTools.Content.Tiles
 			int num24 = -1;
 			int num25 = -1;
 			int num26 = -1;
-			if (tileTop != null && tileTop.nactive() && !tileTop.bottomSlope()) num24 = tileTop.type;
-			if (tileBottom != null && tileBottom.nactive() && !tileBottom.halfBrick() && !tileBottom.topSlope()) num23 = tileBottom.type;
-			if (tileLeft != null && tileLeft.nactive()) num25 = tileLeft.type;
-			if (tileRight != null && tileRight.nactive()) num26 = tileRight.type;
+			if (tileTop != null && !tileTop.IsActuated && tileTop.Slope != SlopeID.HalfBrick && tileTop.Slope != SlopeID.SlopeDownLeft && tileTop.Slope != SlopeID.SlopeDownRight) num24 = tileTop.type;
+			if (tileBottom != null && !tileBottom.IsActuated && tileBottom.Slope != SlopeID.HalfBrick && tileBottom.Slope != SlopeID.SlopeUpLeft && tileBottom.Slope != SlopeID.SlopeUpRight) num23 = tileBottom.type;
+			if (tileLeft != null && !tileLeft.IsActuated) num25 = tileLeft.type;
+			if (tileRight != null && !tileRight.IsActuated) num26 = tileRight.type;
 
 			if (num23 >= 0 && Main.tileSolid[num23] && !Main.tileSolidTop[num23]) tile.frameY = 0;
 			else if (num25 >= 0 && Main.tileSolid[num25] && !Main.tileSolidTop[num25]) tile.frameY = 54;

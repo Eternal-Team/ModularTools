@@ -1,6 +1,7 @@
 ﻿using BaseLibrary.UI;
 using ModularTools.Content.Items.Ingredients;
 using ModularTools.Core;
+using ModularTools.UI;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ModLoader;
@@ -28,7 +29,7 @@ namespace ModularTools
 			{
 				ref UpgradeStationUI ui = ref UpgradeStationUISystem.Instance.upgradeState;
 				ref Display display = ref ui.Display;
-				
+
 				if (display == Display.None)
 				{
 					UILayer.Instance.Remove(ui);

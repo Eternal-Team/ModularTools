@@ -5,11 +5,6 @@ namespace ModularTools.Content.Items.Ingredients
 {
 	public class Brain : BaseItem
 	{
-		public override void SetStaticDefaults()
-		{
-			Tooltip.SetDefault("It feels...squishy");
-		}
-
 		public override void SetDefaults()
 		{
 			item.width = 20;

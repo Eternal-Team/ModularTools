@@ -1,9 +1,10 @@
 ﻿using BaseLibrary.UI;
+using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using ModularTools.Core;
 using Terraria.ModLoader;
 
-namespace ModularTools
+namespace ModularTools.UI
 {
 	public class UIModule : BaseElement
 	{
@@ -19,7 +20,7 @@ namespace ModularTools
 		public UIModule(BaseModule module)
 		{
 			this.module = module;
-			
+
 			mPanel = new UIPanel
 			{
 				Width = { Percent = 100 },
@@ -40,7 +41,7 @@ namespace ModularTools
 			};
 			mPanel.Add(image);
 
-			UIText text = new UIText(module.DisplayName.GetDefault() + "\n" + module.Tooltip.GetDefault())
+			UIText text = new UIText(module.DisplayName.Get())
 			{
 				Width = { Pixels = -56, Percent = 100 },
 				Height = { Percent = 100 },

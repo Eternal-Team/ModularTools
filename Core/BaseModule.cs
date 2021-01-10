@@ -12,6 +12,8 @@ namespace ModularTools.Core
 {
 	public abstract class BaseModule : ModTexturedType
 	{
+		public override string Texture => BaseLibrary.BaseLibrary.PlaceholderTexture;
+
 		public ModTranslation DisplayName { get; internal set; }
 		public ModTranslation Tooltip { get; internal set; }
 		public int Type { get; internal set; }
@@ -76,6 +78,16 @@ namespace ModularTools.Core
 			}
 		}
 
+
+		protected void AddValidModularItems(IEnumerable<int> items)
+		{
+			foreach (int type in items)
+			{
+				ModuleLoader.validItemsForModule[Type].Add(type);
+				ModuleLoader.validModulesForItem[type].Add(Type);
+			}
+		}
+
 		protected void AddValidModularItem<T>() where T : ModularItem
 		{
 			int type = ModContent.ItemType<T>();
@@ -99,15 +111,15 @@ namespace ModularTools.Core
 		internal void InternalInstall(ModularItem item)
 		{
 			item.InstalledModules.Add(this);
-			
+
 			item.HeatStorage.ModifyCapacity(HeatCapacity);
 			item.EnergyStorage.ModifyCapacity(EnergyCapacity);
 		}
-		
+
 		internal void InternalRemove(ModularItem item)
 		{
 			item.InstalledModules.Remove(this);
-			
+
 			item.HeatStorage.ModifyCapacity(-HeatCapacity);
 			item.EnergyStorage.ModifyCapacity(-EnergyCapacity);
 		}

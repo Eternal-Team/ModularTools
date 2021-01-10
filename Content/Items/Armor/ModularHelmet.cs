@@ -27,11 +27,6 @@ namespace ModularTools.Content.Items.Armor
 			};
 		}
 
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Modular Helmet");
-		}
-
 		public override void SetDefaults()
 		{
 			item.width = 20;

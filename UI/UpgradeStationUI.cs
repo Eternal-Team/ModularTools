@@ -7,7 +7,7 @@ using ModularTools.Core;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ModularTools
+namespace ModularTools.UI
 {
 	public class UpgradeStationUI : BaseState
 	{

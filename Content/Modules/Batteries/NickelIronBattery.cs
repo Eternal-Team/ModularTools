@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.Utility;
-using ModularTools.Content.Items.Armor;
 using ModularTools.Content.Items.Tools;
 using ModularTools.Core;
 using Terraria;
@@ -15,12 +14,10 @@ namespace ModularTools.Content.Modules
 		{
 			AddValidModularItem<ModularBore>();
 
-			AddValidModularItem<ModularHelmet>();
-			AddValidModularItem<ModularChestplate>();
-			AddValidModularItem<ModularLeggings>();
+			AddValidModularItems(ModularItem.Group.Armor);
 
-			EnergyCapacity = 3600 * 50;
-			
+			EnergyCapacity = 3600 * 25 * 5;
+
 			Tooltip.SetDefault($"Increases energy storage by {TextUtility.ToSI(EnergyCapacity)}");
 		}
 

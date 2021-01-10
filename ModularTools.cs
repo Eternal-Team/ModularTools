@@ -15,7 +15,7 @@ namespace ModularTools
 		public override void Load()
 		{
 			Hooking.Initialize();
-			
+
 			ModuleSerializer.Load();
 
 			hotKey = RegisterHotKey("Open Upgrade UI", "K");

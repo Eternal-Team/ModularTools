@@ -1,5 +1,4 @@
 ﻿using System;
-using ModularTools.Content.Items.Armor;
 using ModularTools.Core;
 using Terraria;
 using Terraria.ID;
@@ -8,15 +7,11 @@ namespace ModularTools.Content.Modules
 {
 	public class CopperPlating : BaseModule
 	{
-		public override string Texture => BaseLibrary.BaseLibrary.PlaceholderTexture;
-
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("Increases heat transfer rate to 14 W/m2\nProvides 3 kJ of heat capacity\nProvides 3 defense");
 
-			AddValidModularItem<ModularHelmet>();
-			AddValidModularItem<ModularChestplate>();
-			AddValidModularItem<ModularLeggings>();
+			AddValidModularItems(ModularItem.Group.Armor);
 
 			HeatCapacity = 3000;
 		}

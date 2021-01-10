@@ -1,3 +1,16 @@
 ItemName.ModularBore=Modular Bore
+ItemName.ModularChestplate=Modular Chestplate
+ItemName.ModularHelmet=Modular Helmet
+ItemName.ModularLeggings=Modular Leggings
+
+ItemName.Brain=Brain
+ItemName.Sulfur=Sulfur
+
+ItemTooltip.Brain=It feels...squishy
+
+ModuleName.CopperPlating=Copper Plating
+ModuleName.IronPlating=Iron Plating
 
 ModuleName.NickelIronBattery=Nickel-Iron Battery
+ModuleName.LeadAcidBattery=Lead-Acid Battery
+ModuleName.LFPBattery=Lithium Iron Phosphate Battery

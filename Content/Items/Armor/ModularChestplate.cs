@@ -29,11 +29,6 @@ namespace ModularTools.Content.Items.Armor
 			};
 		}
 
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Modular Chestplate");
-		}
-
 		public override void SetDefaults()
 		{
 			item.width = 26;
