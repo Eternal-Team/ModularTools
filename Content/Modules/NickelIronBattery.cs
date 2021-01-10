@@ -21,7 +21,6 @@ namespace ModularTools.Content.Modules
 
 			EnergyCapacity = 3600 * 50;
 			
-			DisplayName.SetDefault("Nickel-Iron Battery");
 			Tooltip.SetDefault($"Increases energy storage by {TextUtility.ToSI(EnergyCapacity)}");
 		}
 
