@@ -10,7 +10,9 @@ namespace ModularTools.Content.Items.Armor
 	[AutoloadEquip(EquipType.Legs)]
 	public class ModularLeggings : ModularItem
 	{
-		public override string Texture => ModularTools.AssetPath + "Textures/Armor/ModularLeggings";
+		public override string Texture => ModularTools.TexturePath + "Items/ModularLeggings";
+
+		public override string ArmorTexture => ModularTools.TexturePath + "Armor/ModularArmor_Legs";
 
 		public float insulation = 1000f;
 

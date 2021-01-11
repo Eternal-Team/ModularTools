@@ -10,9 +10,9 @@ namespace ModularTools.Content.Items.Armor
 	[AutoloadEquip(EquipType.Body)]
 	public class ModularChestplate : ModularItem
 	{
-		public override string Texture => ModularTools.AssetPath + "Textures/Armor/ModularChestplate";
-		public override string ArmTexture => ModularTools.AssetPath + "Textures/Armor/ModularChestplate_Arms";
-		public override string FemaleTexture => ModularTools.AssetPath + "Textures/Armor/ModularChestplate_Female";
+		public override string Texture => ModularTools.TexturePath + "Items/ModularChestplate";
+
+		public override string ArmorTexture => ModularTools.TexturePath + "Armor/ModularArmor";
 
 		public float insulation = 1000f;
 
@@ -27,6 +27,12 @@ namespace ModularTools.Content.Items.Armor
 				Area = 1f,
 				TransferCoefficient = 5f
 			};
+		}
+
+		public override void SetStaticDefaults()
+		{
+			ArmorIDs.Body.Sets.UsesNewFramingCode[item.bodySlot] = true;
+			ArmorIDs.Body.Sets.showsShouldersWhileJumping[item.bodySlot] = true;
 		}
 
 		public override void SetDefaults()
