@@ -6,9 +6,9 @@ using Terraria.ModLoader;
 
 namespace ModularTools.Content.Items.Tools
 {
-	public class ModularBore : ModularItem, IRotatableItem
+	public class ModularChainsaw : ModularItem, IRotatableItem
 	{
-		public override string Texture => ModularTools.TexturePath + "Items/ModularBore";
+		public override string Texture => ModularTools.TexturePath + "Items/ModularChainsaw";
 
 		public override void SetDefaults()
 		{
@@ -20,7 +20,7 @@ namespace ModularTools.Content.Items.Tools
 			item.useAnimation = 12;
 			item.noUseGraphic = true;
 			item.noMelee = true;
-			item.pick = 40;
+			item.axe = 8;
 			item.useStyle = ItemUseStyleID.Shoot;
 			item.holdStyle = ItemHoldStyleID.HoldHeavy;
 			item.knockBack = 6;
@@ -35,6 +35,6 @@ namespace ModularTools.Content.Items.Tools
 			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
 		}
 
-		public Vector2 GetOrigin(Player player) => player.direction == 1 ? new Vector2(50f, 18f) : new Vector2(50f, 8f);
+		public Vector2 GetOrigin(Player player) => player.direction == 1 ? new Vector2(56f, 16f) : new Vector2(56f, 6f);
 	}
 }
