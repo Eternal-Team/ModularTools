@@ -1,5 +1,4 @@
 ﻿using BaseLibrary.Utility;
-using ModularTools.Content.Items.Tools;
 using ModularTools.Core;
 using Terraria;
 using Terraria.ID;
@@ -8,17 +7,14 @@ namespace ModularTools.Content.Modules
 {
 	public class LFPBattery : BaseModule
 	{
-		public override string Texture => BaseLibrary.BaseLibrary.PlaceholderTexture;
-
 		public override void SetStaticDefaults()
 		{
-			AddValidModularItem<ModularBore>();
-
-			AddValidModularItems(ModularItem.Group.Armor);
-
+			Tooltip.SetDefault($"Increases energy storage by {TextUtility.ToSI(EnergyCapacity)}");
 			EnergyCapacity = 3600 * 120 * 5;
 
-			Tooltip.SetDefault($"Increases energy storage by {TextUtility.ToSI(EnergyCapacity)}");
+			ModuleTags.Battery.Set(Type, true);
+
+			AddValidModularItems(ModularItemTags.All);
 		}
 
 		public override void AddRecipes()

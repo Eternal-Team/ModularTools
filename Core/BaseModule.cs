@@ -7,6 +7,7 @@ using BaseLibrary.Utility;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Tags;
 
 namespace ModularTools.Core
 {
@@ -78,10 +79,22 @@ namespace ModularTools.Core
 			}
 		}
 
-
-		protected void AddValidModularItems(IEnumerable<int> items)
+		protected void AddIncompatibleModules(TagData tag)
 		{
-			foreach (int type in items)
+			ModuleLoader.blacklistGroups[Type].Add(tag);
+		}
+
+		protected void AddIncompatibleModule<T>() where T : BaseModule
+		{
+			if (GetType() == typeof(T)) throw new Exception("Module can't be incompatible to itself");
+
+			BaseModule dependency = ModContent.GetInstance<T>();
+			ModuleLoader.blacklistTypes[Type].Add(dependency.Type);
+		}
+
+		protected void AddValidModularItems(TagData tag)
+		{
+			foreach (int type in tag.GetEntries())
 			{
 				ModuleLoader.validItemsForModule[Type].Add(type);
 				ModuleLoader.validModulesForItem[type].Add(Type);

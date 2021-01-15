@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary;
 using BaseLibrary.Utility;
 using EnergyLibrary;
 using Microsoft.Xna.Framework;
-using ModularTools.Content.Items.Armor;
+using ModularTools.Content;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -14,11 +14,6 @@ namespace ModularTools.Core
 {
 	public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 	{
-		public static class Group
-		{
-			public static readonly List<int> Armor = new List<int> { ModContent.ItemType<ModularHelmet>(), ModContent.ItemType<ModularChestplate>(), ModContent.ItemType<ModularLeggings>() };
-		}
-
 		public List<BaseModule> InstalledModules;
 		public EnergyStorage EnergyStorage;
 		public HeatStorage HeatStorage;
@@ -28,6 +23,7 @@ namespace ModularTools.Core
 			base.AutoStaticDefaults();
 
 			ModuleLoader.validModulesForItem[Type] = new List<int>();
+			ModularItemTags.All.Set(Type, true);
 		}
 
 		public override void OnCreate(ItemCreationContext context)
@@ -55,8 +51,8 @@ namespace ModularTools.Core
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
 		{
 			tooltips.Add(new TooltipLine(Mod, "MT:Energy", TextUtility.WithColor($"Energy: {EnergyStorage.Energy}/{EnergyStorage.Capacity} J", new Color(28, 218, 232))));
-			tooltips.Add(new TooltipLine(Mod, "MT:Heat", TextUtility.WithColor($"Temperature: {Math.Round(HeatStorage.Temperature)}", new Color(255, 91, 20)) + "\n" +
-			                                             TextUtility.WithColor($"Transfering: {Math.Round(HeatStorage.TransferCoefficient * HeatStorage.Area, 1)} W", new Color(185, 255, 20))));
+			tooltips.Add(new TooltipLine(Mod, "MT:Temperature", TextUtility.WithColor($"Temperature: {Math.Round(HeatStorage.Temperature)}", new Color(255, 91, 20))));
+			tooltips.Add(new TooltipLine(Mod, "MT:Transfering", TextUtility.WithColor($"Transfering: {Math.Round(HeatStorage.TransferCoefficient * HeatStorage.Area, 1)} W", new Color(185, 255, 20))));
 			tooltips.Add(new TooltipLine(Mod, "MT:Modules", $"{InstalledModules.Count} installed modules"));
 		}
 

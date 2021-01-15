@@ -10,12 +10,12 @@ namespace ModularTools.Content.Modules
 		public override void SetStaticDefaults()
 		{
 			Tooltip.SetDefault("Increases heat transfer rate to 8 W/m2\nProvides 3.5 kJ of heat capacity\nProvides 5 defense");
-
-			AddValidModularItems(ModularItem.Group.Armor);
-
-			// todo: add incompatable modules, add modular item groups (armor, all)
-
 			HeatCapacity = 3500;
+
+			ModuleTags.Plating.Set(Type, true);
+
+			AddValidModularItems(ModularItemTags.Armor);
+			AddIncompatibleModules(ModuleTags.Plating);
 		}
 
 		public override void AddRecipes()
