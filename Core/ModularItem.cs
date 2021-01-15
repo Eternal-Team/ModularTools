@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary;
@@ -74,9 +74,15 @@ namespace ModularTools.Core
 
 		public HeatStorage GetHeatStorage() => HeatStorage;
 
-		public bool IsInstalled(int moduleType)
-		{
-			return InstalledModules.Any(module => module.Type == moduleType);
-		}
+		#region Utility
+		public bool IsInstalled(int moduleType) => InstalledModules.Any(module => module.Type == moduleType);
+		public bool IsInstalled<T>() where T : BaseModule => IsInstalled(ModuleLoader.ModuleType<T>());
+
+		public bool CanInstall(int moduleType) => !IsInstalled(moduleType) && !ModuleLoader.GetIncompatibleModules(moduleType).Any(IsInstalled) && ModuleLoader.GetRequirements(moduleType).All(IsInstalled);
+		public bool CanInstall<T>() where T : BaseModule => CanInstall(ModuleLoader.ModuleType<T>());
+
+		public bool CanUninstall(int moduleType) => IsInstalled(moduleType) && !InstalledModules.Any(module => ModuleLoader.GetRequirements(module.Type).Contains(moduleType));
+		public bool CanUninstall<T>() where T : BaseModule => CanUninstall(ModuleLoader.ModuleType<T>());
+		#endregion
 	}
 }
