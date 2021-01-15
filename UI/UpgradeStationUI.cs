@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.UI;
 using BaseLibrary.Utility;
@@ -197,7 +197,6 @@ namespace ModularTools.UI
 		}
 	}
 
-	// todo: add upgrade station
 	public class UpgradeStationUISystem : ModSystem
 	{
 		public static UpgradeStationUISystem Instance => ModContent.GetInstance<UpgradeStationUISystem>();
@@ -211,6 +210,21 @@ namespace ModularTools.UI
 				upgradeState = new UpgradeStationUI { Display = Display.None };
 				UILayer.Instance.Add(upgradeState);
 			}
+		}
+
+		public void HandleUI()
+		{
+			ref UpgradeStationUI ui = ref upgradeState;
+			ref Display display = ref ui.Display;
+
+			if (display == Display.None)
+			{
+				UILayer.Instance.Remove(ui);
+				ui = new UpgradeStationUI { Display = Display.Visible };
+				UILayer.Instance.Add(ui);
+				ui.Open();
+			}
+			else display = Display.None;
 		}
 	}
 }
