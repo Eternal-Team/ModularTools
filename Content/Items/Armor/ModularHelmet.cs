@@ -12,7 +12,7 @@ namespace ModularTools.Content.Items.Armor
 	{
 		public override string Texture => ModularTools.TexturePath + "Items/ModularHelmet";
 
-		public override string ArmorTexture => ModularTools.TexturePath + "Armor/ModularArmor_Head";
+		public override string EquipTexture => ModularTools.TexturePath + "Armor/ModularArmor_Head";
 
 		public float insulation = 1000f;
 
@@ -31,24 +31,19 @@ namespace ModularTools.Content.Items.Armor
 
 		public override void SetStaticDefaults()
 		{
-			ArmorIDs.Head.Sets.PreventBeardDraw[item.headSlot] = true;
-			ArmorIDs.Head.Sets.UseAltFaceHeadDraw[item.headSlot] = true;
+			ArmorIDs.Head.Sets.PreventBeardDraw[Item.headSlot] = true;
+			ArmorIDs.Head.Sets.UseAltFaceHeadDraw[Item.headSlot] = true;
+		
+			ModularItemTags.Armor.Set(Type, true);
 		}
 
 		public override void SetDefaults()
 		{
-			item.width = 18;
-			item.height = 18;
-			item.value = 10000;
-			item.rare = ItemRarityID.Cyan;
-			item.defense = 1;
-		}
-
-		public override void AddRecipes()
-		{
-			CreateRecipe()
-				.AddIngredient(ItemID.DirtBlock)
-				.Register();
+			Item.width = 18;
+			Item.height = 18;
+			Item.value = 10000;
+			Item.rare = ItemRarityID.Cyan;
+			Item.defense = 1;
 		}
 
 		public override bool IsArmorSet(Item head, Item body, Item legs) => body.type == ModContent.ItemType<ModularChestplate>() && legs.type == ModContent.ItemType<ModularLeggings>();

@@ -12,7 +12,7 @@ namespace ModularTools.Content.Items.Armor
 	{
 		public override string Texture => ModularTools.TexturePath + "Items/ModularChestplate";
 
-		public override string ArmorTexture => ModularTools.TexturePath + "Armor/ModularArmor";
+		public override string EquipTexture => ModularTools.TexturePath + "Armor/ModularArmor";
 
 		public float insulation = 1000f;
 
@@ -31,24 +31,19 @@ namespace ModularTools.Content.Items.Armor
 
 		public override void SetStaticDefaults()
 		{
-			ArmorIDs.Body.Sets.UsesNewFramingCode[item.bodySlot] = true;
-			ArmorIDs.Body.Sets.showsShouldersWhileJumping[item.bodySlot] = true;
+			ArmorIDs.Body.Sets.UsesNewFramingCode[Item.bodySlot] = true;
+			ArmorIDs.Body.Sets.showsShouldersWhileJumping[Item.bodySlot] = true;
+			
+			ModularItemTags.Armor.Set(Type, true);
 		}
 
 		public override void SetDefaults()
 		{
-			item.width = 26;
-			item.height = 20;
-			item.value = 10000;
-			item.rare = ItemRarityID.Cyan;
-			item.defense = 1;
-		}
-
-		public override void AddRecipes()
-		{
-			CreateRecipe()
-				.AddIngredient(ItemID.DirtBlock)
-				.Register();
+			Item.width = 26;
+			Item.height = 20;
+			Item.value = 10000;
+			Item.rare = ItemRarityID.Cyan;
+			Item.defense = 1;
 		}
 
 		public override void UpdateEquip(Player player)

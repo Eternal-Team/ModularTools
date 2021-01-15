@@ -12,7 +12,7 @@ namespace ModularTools.Content.Items.Armor
 	{
 		public override string Texture => ModularTools.TexturePath + "Items/ModularLeggings";
 
-		public override string ArmorTexture => ModularTools.TexturePath + "Armor/ModularArmor_Legs";
+		public override string EquipTexture => ModularTools.TexturePath + "Armor/ModularArmor_Legs";
 
 		public float insulation = 1000f;
 
@@ -29,20 +29,18 @@ namespace ModularTools.Content.Items.Armor
 			};
 		}
 
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
-			item.width = 20;
-			item.height = 12;
-			item.value = 10000;
-			item.rare = ItemRarityID.Cyan;
-			item.defense = 1;
+			ModularItemTags.Armor.Set(Type, true);
 		}
 
-		public override void AddRecipes()
+		public override void SetDefaults()
 		{
-			CreateRecipe()
-				.AddIngredient(ItemID.DirtBlock)
-				.Register();
+			Item.width = 20;
+			Item.height = 12;
+			Item.value = 10000;
+			Item.rare = ItemRarityID.Cyan;
+			Item.defense = 1;
 		}
 
 		public override void UpdateEquip(Player player)

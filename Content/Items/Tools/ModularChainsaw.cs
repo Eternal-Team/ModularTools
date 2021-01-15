@@ -12,22 +12,22 @@ namespace ModularTools.Content.Items.Tools
 
 		public override void SetDefaults()
 		{
-			item.damage = 40;
-			item.DamageType = ModContent.GetInstance<ModularDamageClass>();
-			item.width = 20;
-			item.height = 12;
-			item.useTime = 12;
-			item.useAnimation = 12;
-			item.noUseGraphic = true;
-			item.noMelee = true;
-			item.axe = 8;
-			item.useStyle = ItemUseStyleID.Shoot;
-			item.holdStyle = ItemHoldStyleID.HoldHeavy;
-			item.knockBack = 6;
-			item.value = Item.buyPrice(gold: 22, silver: 50);
-			item.rare = ItemRarityID.Cyan;
-			item.UseSound = SoundID.Item23;
-			item.autoReuse = true;
+			Item.damage = 40;
+			Item.DamageType = ModContent.GetInstance<ModularDamageClass>();
+			Item.width = 20;
+			Item.height = 12;
+			Item.useTime = 12;
+			Item.useAnimation = 12;
+			Item.noUseGraphic = true;
+			Item.noMelee = true;
+			Item.axe = 8;
+			Item.useStyle = ItemUseStyleID.Shoot;
+			Item.holdStyle = ItemHoldStyleID.HoldHeavy;
+			Item.knockBack = 6;
+			Item.value = Item.buyPrice(gold: 22, silver: 50);
+			Item.rare = ItemRarityID.Cyan;
+			Item.UseSound = SoundID.Item23;
+			Item.autoReuse = true;
 		}
 
 		public override void UpdateInventory(Player player)

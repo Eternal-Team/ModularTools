@@ -9,9 +9,9 @@ namespace ModularTools
 	public partial class MTPlayer
 	{
 		public bool WearingModularSet =>
-			!player.armor[0].IsAir && player.armor[0].modItem is ModularHelmet &&
-			!player.armor[1].IsAir && player.armor[1].modItem is ModularChestplate &&
-			!player.armor[2].IsAir && player.armor[2].modItem is ModularLeggings;
+			!Player.armor[0].IsAir && Player.armor[0].ModItem is ModularHelmet &&
+			!Player.armor[1].IsAir && Player.armor[1].ModItem is ModularChestplate &&
+			!Player.armor[2].IsAir && Player.armor[2].ModItem is ModularLeggings;
 
 		public float AmbientTemperature;
 		public float heatBalancing;
@@ -19,7 +19,7 @@ namespace ModularTools
 		public void UpdateEnvironment()
 		{
 			float surface = (float)(Main.worldSurface * 2 - MathUtility.Lerp((Main.maxTilesY - 1200) / 1200f, 150, 250));
-			Layer layer = GetLayer(player, surface, out int depth);
+			Layer layer = GetLayer(Player, surface, out int depth);
 
 			float safeZone = 200f;
 
@@ -34,15 +34,15 @@ namespace ModularTools
 				else AmbientTemperature = MathUtility.Map(depth, -safeZone, -surface, Utility.ToKelvin(10f), Utility.ToKelvin(-50f));
 			}
 
-			if (player.ZoneSnow)
+			if (Player.ZoneSnow)
 			{
 				AmbientTemperature -= 50f;
 			}
-			else if (player.ZoneDesert || player.ZoneBeach)
+			else if (Player.ZoneDesert || Player.ZoneBeach)
 			{
 				AmbientTemperature += 20f;
 			}
-			else if (player.ZoneJungle)
+			else if (Player.ZoneJungle)
 			{
 				AmbientTemperature += 10f;
 			}
@@ -50,9 +50,9 @@ namespace ModularTools
 			float transfered;
 			if (WearingModularSet)
 			{
-				ModularHelmet helmet = (ModularHelmet)player.armor[0].modItem;
-				ModularChestplate chestplate = (ModularChestplate)player.armor[1].modItem;
-				ModularLeggings leggings = (ModularLeggings)player.armor[2].modItem;
+				ModularHelmet helmet = (ModularHelmet)Player.armor[0].ModItem;
+				ModularChestplate chestplate = (ModularChestplate)Player.armor[1].ModItem;
+				ModularLeggings leggings = (ModularLeggings)Player.armor[2].ModItem;
 
 				helmet.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
 				chestplate.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
@@ -71,11 +71,11 @@ namespace ModularTools
 			heatBalancing = 120f;
 			if (transfered < 0)
 			{
-				if (!player.HeldItem.IsAir && ItemID.Sets.Torches[player.HeldItem.type] || player.adjTile[TileID.Torches])
+				if (!Player.HeldItem.IsAir && ItemID.Sets.Torches[Player.HeldItem.type] || Player.adjTile[TileID.Torches])
 					heatBalancing += 200f;
-				if (player.adjTile[TileID.Candles] || player.adjTile[TileID.Candelabras] || player.adjTile[TileID.Chandeliers])
+				if (Player.adjTile[TileID.Candles] || Player.adjTile[TileID.Candelabras] || Player.adjTile[TileID.Chandeliers])
 					heatBalancing += 5f;
-				if (player.HasBuff(BuffID.Warmth) || player.HasBuff(BuffID.Campfire))
+				if (Player.HasBuff(BuffID.Warmth) || Player.HasBuff(BuffID.Campfire))
 					heatBalancing += 100f;
 				PlayerHeat.ModifyHeat(Math.Min(-transfered, heatBalancing));
 			}

@@ -11,26 +11,19 @@ namespace ModularTools.Content.Items.Ingredients
 
 		public override void SetDefaults()
 		{
-			item.width = 16;
-			item.height = 16;
+			Item.width = 16;
+			Item.height = 16;
 
-			item.maxStack = 999;
-			item.value = Item.buyPrice(silver: 10);
-			item.createTile = ModContent.TileType<Tiles.Sulfur>();
-			item.consumable = true;
-			item.useStyle = ItemUseStyleID.Swing;
-			item.useTurn = true;
-			item.useAnimation = 15;
-			item.useTime = 10;
-			item.autoReuse = true;
-			item.rare = ItemRarityID.Blue;
-		}
-
-		public override void AddRecipes()
-		{
-			CreateRecipe()
-				.AddIngredient(ItemID.DirtBlock)
-				.Register();
+			Item.maxStack = 999;
+			Item.value = Item.buyPrice(silver: 10);
+			Item.createTile = ModContent.TileType<Tiles.Sulfur>();
+			Item.consumable = true;
+			Item.useStyle = ItemUseStyleID.Swing;
+			Item.useTurn = true;
+			Item.useAnimation = 15;
+			Item.useTime = 10;
+			Item.autoReuse = true;
+			Item.rare = ItemRarityID.Blue;
 		}
 	}
 }

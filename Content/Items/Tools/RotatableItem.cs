@@ -8,12 +8,17 @@ using Terraria.ModLoader;
 
 namespace ModularTools.Content.Items.Tools
 {
+	public interface IRotatableItem
+	{
+		Vector2 GetOrigin(Player player);
+	}
+
 	public class RotatableItemDrawLayer : PlayerDrawLayer
 	{
 		public override bool GetDefaultVisiblity(PlayerDrawSet drawInfo)
 		{
 			Item item = drawInfo.drawPlayer.HeldItem;
-			return !item.IsAir && item.modItem is IRotatableItem;
+			return !item.IsAir && item.ModItem is IRotatableItem;
 		}
 
 		public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.ArmOverItem);
@@ -22,7 +27,7 @@ namespace ModularTools.Content.Items.Tools
 		{
 			Player player = drawInfo.drawPlayer;
 			
-			ModItem item = player.HeldItem.modItem;
+			ModItem item = player.HeldItem.ModItem;
 			Texture2D texture = TextureAssets.Item[item.Type].Value;
 
 			Vector2 compositeOffset_FrontArm = new Vector2(-5 * (!drawInfo.playerEffect.HasFlag(SpriteEffects.FlipHorizontally) ? 1 : -1), 0f);
@@ -55,26 +60,21 @@ namespace ModularTools.Content.Items.Tools
 		}
 	}
 
-	public interface IRotatableItem
-	{
-		Vector2 GetOrigin(Player player);
-	}
-
 	public class RotatableItemPlayer : ModPlayer
 	{
 		public override void PreUpdate()
 		{
-			if (!player.HeldItem.IsAir && player.HeldItem.modItem is IRotatableItem) player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+			if (!Player.HeldItem.IsAir && Player.HeldItem.ModItem is IRotatableItem) Player.direction = Main.MouseWorld.X >= Player.Center.X ? 1 : -1;
 		}
 
 		public override void PostUpdate()
 		{
-			if (!player.HeldItem.IsAir && player.HeldItem.modItem is IRotatableItem) player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+			if (!Player.HeldItem.IsAir && Player.HeldItem.ModItem is IRotatableItem) Player.direction = Main.MouseWorld.X >= Player.Center.X ? 1 : -1;
 		}
 
 		public override bool PreItemCheck()
 		{
-			if (!player.HeldItem.IsAir && player.HeldItem.modItem is IRotatableItem) player.direction = Main.MouseWorld.X >= player.Center.X ? 1 : -1;
+			if (!Player.HeldItem.IsAir && Player.HeldItem.ModItem is IRotatableItem) Player.direction = Main.MouseWorld.X >= Player.Center.X ? 1 : -1;
 
 			return true;
 		}

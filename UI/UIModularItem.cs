@@ -30,7 +30,7 @@ namespace ModularTools.UI
 
 			spriteBatch.Draw(bg, Dimensions, Color.White * fade);
 
-			Item item = modularItem.item;
+			Item item = modularItem.Item;
 			Main.instance.LoadItem(item.type);
 			Texture2D itemTexture = TextureAssets.Item[item.type].Value;
 

@@ -40,9 +40,9 @@ namespace ModularTools.Core
 
 		public override BaseModule Deserialize(TagCompound tag)
 		{
-			if (ModContent.TryFind(tag.GetString("Mod"), tag.GetString("Name"), out BaseModule modItem))
+			if (ModContent.TryFind(tag.GetString("Mod"), tag.GetString("Name"), out BaseModule ModItem))
 			{
-				BaseModule module = modItem.Clone();
+				BaseModule module = ModItem.Clone();
 				module.Load(tag.GetCompound("Data"));
 				return module;
 			}
