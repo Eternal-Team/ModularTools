@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BaseLibrary.UI;
 using BaseLibrary.Utility;
@@ -14,6 +14,9 @@ namespace ModularTools.UI
 		private UIGrid<UIModularItem> gridItems;
 		private UIGrid<UIModule> gridModules;
 		private Ref<string> search = new Ref<string>("");
+		private UIPanel panelInfo;
+		private ModularItem selectedItem;
+		private BaseModule selectedModule;
 
 		public UpgradeStationUI()
 		{
@@ -116,7 +119,7 @@ namespace ModularTools.UI
 				};
 				modulePanel.Add(gridModules);
 
-				UIPanel infoPanel = new UIPanel
+				panelInfo = new UIPanel
 				{
 					Width = { Percent = 60 },
 					Height = { Percent = 100, Pixels = -28 },
@@ -128,19 +131,22 @@ namespace ModularTools.UI
 						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
 					}
 				};
-				panel.Add(infoPanel);
+				panel.Add(panelInfo);
 			});
 		}
 
 		public void Open()
 		{
+			selectedItem = null;
+			selectedModule = null;
+
 			gridItems.Clear();
 
-			foreach (Item item in InventoryUtility.InvArmor(Main.LocalPlayer))
+			foreach (Item item in InventoryUtility.InvArmorEquips(Main.LocalPlayer))
 			{
 				if (item.IsAir) continue;
 
-				if (item.modItem is ModularItem modularItem)
+				if (item.ModItem is ModularItem modularItem)
 				{
 					UIModularItem uiModularItem = new UIModularItem(modularItem)
 					{
@@ -163,11 +169,13 @@ namespace ModularTools.UI
 
 		private void OpenItem(ModularItem item)
 		{
+			selectedItem = item;
+
 			gridModules.Clear();
 
 			foreach (int type in ModuleLoader.validModulesForItem[item.Type])
 			{
-				BaseModule module = ModuleLoader.modules[type];
+				BaseModule module = ModuleLoader.GetModule(type);
 
 				UIModule uiModule = new UIModule(module)
 				{
@@ -177,23 +185,118 @@ namespace ModularTools.UI
 				};
 				uiModule.OnClick += args =>
 				{
-					if (item.IsInstalled(module.Type))
-					{
-						BaseModule clone = item.InstalledModules.First(x => x.Type == module.Type);
-						clone.InternalRemove(item);
-					}
-					else
-					{
-						BaseModule clone = module.Clone();
-						clone.InternalInstall(item);
-					}
-
-					uiModule.Color = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red;
-
 					args.Handled = true;
+
+					OpenModule(module);
 				};
 				gridModules.Add(uiModule);
 			}
+		}
+
+		private void OpenModule(BaseModule module)
+		{
+			selectedModule = module;
+			panelInfo.Clear();
+
+			UIText textModule = new UIText(module.DisplayName.Get())
+			{
+				Width = { Percent = 100 },
+				Height = { Pixels = 20 }
+			};
+			panelInfo.Add(textModule);
+
+			UIDivider divider = new UIDivider
+			{
+				Width = { Percent = 100 },
+				Y = { Pixels = 28 }
+			};
+			panelInfo.Add(divider);
+
+			UIText text = new UIText(module.Tooltip.Get())
+			{
+				Width = { Percent = 100 },
+				Height = { Percent = 100 },
+				Y = { Pixels = 36 }
+			};
+			panelInfo.Add(text);
+
+			string name = ModuleLoader.GetRequirements(module.Type).Aggregate("Requirements", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
+			UIText textRequirements = new UIText(name)
+			{
+				Width = { Percent = 50 },
+				Height = { Pixels = 20 },
+				Y = { Pixels = 100 + 36 }
+			};
+			panelInfo.Add(textRequirements);
+
+			name = ModuleLoader.GetIncompatibleModules(module.Type).Aggregate("Incompatible", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
+			UIText textBlacklist = new UIText(name)
+			{
+				Width = { Percent = 50 },
+				Height = { Pixels = 20 },
+				X = { Percent = 100 },
+				Y = { Pixels = 100 + 36 }
+			};
+			panelInfo.Add(textBlacklist);
+
+			UITextButton buttonInstall = new UITextButton("Install")
+			{
+				Width = { Percent = 50, Pixels = -4 },
+				Height = { Pixels = 30 },
+				Y = { Percent = 100 },
+				Settings =
+				{
+					VerticalAlignment = VerticalAlignment.Center,
+					HorizontalAlignment = HorizontalAlignment.Center,
+					Disabled = !selectedItem.CanInstall(module.Type)
+				}
+			};
+
+			UITextButton buttonUninstall = new UITextButton("Uninstall")
+			{
+				Width = { Percent = 50, Pixels = -4 },
+				Height = { Pixels = 30 },
+				X = { Percent = 100 },
+				Y = { Percent = 100 },
+				Settings =
+				{
+					VerticalAlignment = VerticalAlignment.Center,
+					HorizontalAlignment = HorizontalAlignment.Center,
+					Disabled = !selectedItem.CanUninstall(module.Type)
+				}
+			};
+
+			buttonInstall.OnClick += args =>
+			{
+				args.Handled = true;
+
+				if (selectedItem.CanInstall(module.Type))
+				{
+					BaseModule clone = module.Clone();
+					clone.InternalInstall(selectedItem);
+
+					gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.module == module).Color = Color.LimeGreen;
+					buttonInstall.Settings.Disabled = true;
+					buttonUninstall.Settings.Disabled = false;
+				}
+			};
+			panelInfo.Add(buttonInstall);
+
+			buttonUninstall.OnClick += args =>
+			{
+				args.Handled = true;
+
+				if (selectedItem.CanUninstall(module.Type))
+				{
+					BaseModule clone = selectedItem.InstalledModules.First(x => x.Type == module.Type);
+					clone.InternalRemove(selectedItem);
+
+					gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.module == module).Color = Color.Red;
+					buttonInstall.Settings.Disabled = false;
+					buttonUninstall.Settings.Disabled = true;
+				}
+			};
+			panelInfo.Add(buttonUninstall);
 		}
 	}
 
