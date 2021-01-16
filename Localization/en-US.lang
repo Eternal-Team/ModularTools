@@ -10,7 +10,14 @@ ItemTooltip.Brain=It feels...squishy
 
 ModuleName.CopperPlating=Copper Plating
 ModuleName.IronPlating=Iron Plating
+ModuleName.SteelPlating=Steel Plating
+ModuleName.AluminiumPlating=Aluminium Plating
+ModuleName.GoldPlating=Gold Plating
+ModuleName.TungstenCarbidePlating=Tungsten Carbide Plating
+ModuleName.DDTungstenCarbidePlating=Diamond-doped Tungsten Carbide Plating
 
 ModuleName.NickelIronBattery=Nickel-Iron Battery
 ModuleName.LeadAcidBattery=Lead-Acid Battery
 ModuleName.LFPBattery=Lithium Iron Phosphate Battery
+
+ModuleData.Defense=Provides {0} defense

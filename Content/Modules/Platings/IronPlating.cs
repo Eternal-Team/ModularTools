@@ -1,5 +1,6 @@
 ﻿using System;
 using ModularTools.Core;
+using ModularTools.DataTags;
 using Terraria;
 using Terraria.ID;
 
@@ -9,8 +10,10 @@ namespace ModularTools.Content.Modules
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Increases heat transfer rate to 8 W/m2\nProvides 3.5 kJ of heat capacity\nProvides 5 defense");
+			Tooltip.SetDefault("Increases heat transfer rate to 8 W/m2\nProvides 3.5 kJ of heat capacity");
 			HeatCapacity = 3500;
+
+			ModuleData.Defense.Set(Type, 5);
 
 			ModuleTags.Plating.Set(Type, true);
 
@@ -36,7 +39,7 @@ namespace ModularTools.Content.Modules
 
 		public override void OnUpdate(ModularItem item, Player player)
 		{
-			player.statDefense += 5;
+			player.statDefense += ModuleData.Defense.Get(Type);
 		}
 	}
 }

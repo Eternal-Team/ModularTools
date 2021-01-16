@@ -14,15 +14,6 @@ environmental effects
 
 PRE-HM
 
-armor platings
-    4 - 25
-
-    gold - medium heat dissapation 12, very low defense 3
-    aluminium - medium heat dissapation 12, medium defense 4
-    steel - low heat dissapation 11, very high defense 6
-    tungsten carbide - medium heat dissapation 13, extremely high defense 8
-    diamond doped tungsten carbine - very high heat dissapation 18, extremely high defense 9
-
 insulation
     insulation protects against cold, prevents heat from escaping
 

@@ -6,12 +6,12 @@ using Terraria.ID;
 
 namespace ModularTools.Content.Modules
 {
-	public class CopperPlating : BaseModule
+	public class GoldPlating : BaseModule
 	{
 		public override void SetStaticDefaults()
 		{
-			Tooltip.SetDefault("Increases heat transfer rate to 384 W/m2\nProvides 3 kJ of heat capacity");
-			HeatCapacity = 3000;
+			Tooltip.SetDefault("Increases heat transfer rate to 12 W/m2\nProvides 1.5 kJ of heat capacity");
+			HeatCapacity = 1500;
 
 			ModuleData.Defense.Set(Type, 3);
 
@@ -30,7 +30,7 @@ namespace ModularTools.Content.Modules
 
 		public override void OnInstalled(ModularItem item)
 		{
-			item.HeatStorage.TransferCoefficient = Math.Max(384f, item.HeatStorage.TransferCoefficient);
+			item.HeatStorage.TransferCoefficient = Math.Max(14f, item.HeatStorage.TransferCoefficient);
 		}
 
 		public override void OnRemoved(ModularItem item)
