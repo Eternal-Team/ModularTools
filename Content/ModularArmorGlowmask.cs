@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ModularTools.Content.Items.Armor;
 using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
@@ -20,8 +21,9 @@ namespace ModularTools.Content
 	{
 		protected abstract DrawDataInfo GetData(PlayerDrawSet info);
 
-		// todo: glow only when energy > 0
-		public override bool GetDefaultVisiblity(PlayerDrawSet drawInfo) => drawInfo.shadow == 0f && !drawInfo.drawPlayer.invis;
+		public override bool GetDefaultVisiblity(PlayerDrawSet drawInfo) => drawInfo.shadow == 0f && !drawInfo.drawPlayer.invis && ShouldGlow(drawInfo);
+
+		public abstract bool ShouldGlow(PlayerDrawSet info);
 
 		protected override void Draw(ref PlayerDrawSet drawInfo)
 		{
@@ -61,6 +63,12 @@ namespace ModularTools.Content
 			return GetBodyDrawDataInfo(info, info.drawPlayer.Male ? glowTextureMale.Value : glowTextureFemale.Value);
 		}
 
+		public override bool ShouldGlow(PlayerDrawSet info)
+		{
+			Item item = info.drawPlayer.armor[1];
+			return !item.IsAir && item.ModItem is ModularChestplate chestplate && chestplate.EnergyStorage.Energy > 0;
+		}
+
 		public static DrawDataInfo GetBodyDrawDataInfo(PlayerDrawSet drawInfo, Texture2D texture)
 		{
 			Player drawPlayer = drawInfo.drawPlayer;
@@ -95,6 +103,12 @@ namespace ModularTools.Content
 			return GetHeadDrawDataInfo(info, glowTexture.Value);
 		}
 
+		public override bool ShouldGlow(PlayerDrawSet info)
+		{
+			Item item = info.drawPlayer.armor[0];
+			return !item.IsAir && item.ModItem is ModularHelmet helmet && helmet.EnergyStorage.Energy > 0;
+		}
+
 		public static DrawDataInfo GetHeadDrawDataInfo(PlayerDrawSet drawInfo, Texture2D texture)
 		{
 			Player drawPlayer = drawInfo.drawPlayer;
@@ -125,6 +139,12 @@ namespace ModularTools.Content
 			glowTexture = glowTexture ?? ModContent.GetTexture(ModularTools.TexturePath + "Armor/ModularArmor_Legs_Glow");
 
 			return GetLegDrawDataInfo(info, glowTexture.Value);
+		}
+
+		public override bool ShouldGlow(PlayerDrawSet info)
+		{
+			Item item = info.drawPlayer.armor[2];
+			return !item.IsAir && item.ModItem is ModularLeggings leggings && leggings.EnergyStorage.Energy > 0;
 		}
 
 		public static DrawDataInfo GetLegDrawDataInfo(PlayerDrawSet drawInfo, Texture2D texture)

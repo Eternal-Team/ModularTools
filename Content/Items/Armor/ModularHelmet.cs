@@ -33,7 +33,7 @@ namespace ModularTools.Content.Items.Armor
 		{
 			ArmorIDs.Head.Sets.PreventBeardDraw[Item.headSlot] = true;
 			ArmorIDs.Head.Sets.UseAltFaceHeadDraw[Item.headSlot] = true;
-		
+
 			ModularItemTags.Armor.Set(Type, true);
 		}
 
@@ -50,6 +50,8 @@ namespace ModularTools.Content.Items.Armor
 
 		public override void UpdateEquip(Player player)
 		{
+			if (EnergyStorage.Energy > 0) Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0f, 0.1f, 0.3f);
+
 			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
 		}
 	}

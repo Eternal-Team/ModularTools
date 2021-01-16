@@ -26,7 +26,7 @@ namespace ModularTools.Content.Items.Tools
 		protected override void Draw(ref PlayerDrawSet drawInfo)
 		{
 			Player player = drawInfo.drawPlayer;
-			
+
 			ModItem item = player.HeldItem.ModItem;
 			Texture2D texture = TextureAssets.Item[item.Type].Value;
 

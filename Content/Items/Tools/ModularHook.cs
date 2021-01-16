@@ -26,7 +26,7 @@ namespace ModularTools.Content.Items.Tools
 			Item.shootSpeed = 18f;
 			Item.shoot = ModContent.ProjectileType<Projectiles.ModularHook>();
 		}
-		
+
 		public override void UpdateInventory(Player player)
 		{
 			foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
