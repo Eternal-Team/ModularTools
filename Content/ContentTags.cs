@@ -7,13 +7,13 @@ namespace ModularTools.Content
 	{
 		public override int TypeCount => ModuleLoader.Count;
 	}
-	
+
 	public static class ModuleTags
 	{
 		public static readonly TagData Plating = ContentTags.Get<ModuleGroup>(nameof(Plating));
 		public static readonly TagData Battery = ContentTags.Get<ModuleGroup>(nameof(Battery));
 	}
-	
+
 	public static class ModularItemTags
 	{
 		public static readonly TagData Armor = ContentTags.Get<ItemTags>(nameof(Armor));
