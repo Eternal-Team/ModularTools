@@ -53,7 +53,6 @@ namespace ModularTools.Core
 		}
 		#endregion
 
-		public int EnergyCapacity;
 		public int HeatCapacity;
 
 		public virtual BaseModule Clone() => (BaseModule)MemberwiseClone();
@@ -126,7 +125,8 @@ namespace ModularTools.Core
 			item.InstalledModules.Add(this);
 
 			item.HeatStorage.ModifyCapacity(HeatCapacity);
-			item.EnergyStorage.ModifyCapacity(EnergyCapacity);
+
+			OnInstalled(item);
 		}
 
 		internal void InternalRemove(ModularItem item)
@@ -134,7 +134,8 @@ namespace ModularTools.Core
 			item.InstalledModules.Remove(this);
 
 			item.HeatStorage.ModifyCapacity(-HeatCapacity);
-			item.EnergyStorage.ModifyCapacity(-EnergyCapacity);
+
+			OnRemoved(item);
 		}
 
 		public virtual void OnInstalled(ModularItem item)

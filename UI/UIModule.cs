@@ -6,10 +6,10 @@ using Terraria.ModLoader;
 
 namespace ModularTools.UI
 {
-	public class UIModule : BaseElement
+	public class UIModule : BaseElement, IGridElement
 	{
 		private UIPanel mPanel;
-		public BaseModule module;
+		public BaseModule Module { get; }
 
 		public Color Color
 		{
@@ -19,7 +19,7 @@ namespace ModularTools.UI
 
 		public UIModule(BaseModule module)
 		{
-			this.module = module;
+			Module = module;
 
 			mPanel = new UIPanel
 			{
@@ -28,7 +28,7 @@ namespace ModularTools.UI
 			};
 			Add(mPanel);
 
-			UITexture image = new UITexture(ModContent.GetTexture(module.Texture).Value)
+			UITexture image = new UITexture(ModContent.GetTexture(module.Texture))
 			{
 				Width = { Pixels = 48 },
 				Height = { Pixels = 48 },
@@ -49,5 +49,7 @@ namespace ModularTools.UI
 			};
 			mPanel.Add(text);
 		}
+
+		public bool Selected { get; set; }
 	}
 }

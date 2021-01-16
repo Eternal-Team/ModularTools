@@ -10,27 +10,26 @@ using Terraria.UI;
 
 namespace ModularTools.UI
 {
-	public class UIModularItem : BaseElement
+	public class UIModularItem : BaseElement, IGridElement
 	{
-		public ModularItem modularItem;
 		private static Texture2D bg;
-		public bool selected;
 
-		public UIModularItem(ModularItem modularItem)
+		public ModularItem Item { get; }
+		private Transition fade = new Transition(0f, 1f, 0.05f);
+
+		public UIModularItem(ModularItem item)
 		{
 			if (bg == null) bg = DrawingUtility.GetTexturePremultiplied(ModularTools.AssetPath + "Textures/UI/Upgrade/ModularItemBackground");
-			this.modularItem = modularItem;
+			Item = item;
 		}
-
-		private Transition fade = new Transition(0f, 1f, 0.05f);
 
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
-			fade.Update(IsMouseHovering || selected);
+			fade.Update(IsMouseHovering || Selected);
 
 			spriteBatch.Draw(bg, Dimensions, Color.White * fade);
 
-			Item item = modularItem.Item;
+			Item item = Item.Item;
 			Main.instance.LoadItem(item.type);
 			Texture2D itemTexture = TextureAssets.Item[item.type].Value;
 
@@ -60,5 +59,7 @@ namespace ModularTools.UI
 
 			ItemLoader.PostDrawInInventory(item, spriteBatch, position - rect.Size() * 0.5f * drawScale, rect, item.GetAlpha(newColor), item.GetColor(Color.White), origin, drawScale * pulseScale);
 		}
+
+		public bool Selected { get; set; }
 	}
 }

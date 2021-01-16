@@ -54,9 +54,9 @@ namespace ModularTools
 				ModularChestplate chestplate = (ModularChestplate)Player.armor[1].ModItem;
 				ModularLeggings leggings = (ModularLeggings)Player.armor[2].ModItem;
 
-				helmet.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
-				chestplate.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
-				leggings.HeatStorage.TransferToEnvironment(AmbientTemperature, 1f);
+				helmet.HeatStorage.TransferToEnvironment(AmbientTemperature, 1 / 60f);
+				chestplate.HeatStorage.TransferToEnvironment(AmbientTemperature, 1 / 60f);
+				leggings.HeatStorage.TransferToEnvironment(AmbientTemperature, 1 / 60f);
 
 				transfered = helmet.HeatStorage.TransferTo(PlayerHeat, helmet.insulation);
 				transfered += chestplate.HeatStorage.TransferTo(PlayerHeat, chestplate.insulation);
@@ -64,7 +64,7 @@ namespace ModularTools
 			}
 			else
 			{
-				transfered = PlayerHeat.TransferToEnvironment(AmbientTemperature, 1f);
+				transfered = PlayerHeat.TransferToEnvironment(AmbientTemperature, 1 / 60f);
 			}
 
 			// heating

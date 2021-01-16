@@ -4,7 +4,9 @@ using BaseLibrary.UI;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using ModularTools.Core;
+using ModularTools.DataTags;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ModularTools.UI
@@ -14,13 +16,18 @@ namespace ModularTools.UI
 		private UIGrid<UIModularItem> gridItems;
 		private UIGrid<UIModule> gridModules;
 		private Ref<string> search = new Ref<string>("");
-		private UIPanel panelInfo;
 		private ModularItem selectedItem;
 		private BaseModule selectedModule;
+		private UIText textModule;
+		private UIText textModuleDescription;
+		private UIText textRequirements;
+		private UIText textIncompatible;
+		private UITextButton buttonInstall;
+		private UITextButton buttonUninstall;
 
 		public UpgradeStationUI()
 		{
-			UIPanel panel = new UIPanel
+			UIPanel panelMain = new UIPanel
 			{
 				Width = { Pixels = 1000 },
 				Height = { Pixels = 550 + 28 },
@@ -32,15 +39,15 @@ namespace ModularTools.UI
 					DragZones = new List<DragZone> { new DragZone { Width = { Percent = 100 }, Height = { Pixels = 28 } } }
 				}
 			};
-			Add(panel);
+			Add(panelMain);
 
-			panel.With(() =>
+			panelMain.With(() =>
 			{
 				UIText title = new UIText("Upgrade Station")
 				{
 					Height = { Pixels = 20 }
 				};
-				panel.Add(title);
+				panelMain.Add(title);
 
 				UIText closeButton = new UIText("X")
 				{
@@ -55,9 +62,9 @@ namespace ModularTools.UI
 				};
 				closeButton.OnMouseEnter += args => closeButton.Settings.TextColor = Color.Red;
 				closeButton.OnMouseLeave += args => closeButton.Settings.TextColor = Color.White;
-				panel.Add(closeButton);
+				panelMain.Add(closeButton);
 
-				UIPanel itemPanel = new UIPanel
+				UIPanel panelItems = new UIPanel
 				{
 					Width = { Pixels = 64 },
 					Height = { Percent = 100, Pixels = -28 },
@@ -68,16 +75,19 @@ namespace ModularTools.UI
 						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
 					}
 				};
-				panel.Add(itemPanel);
-
-				gridItems = new UIGrid<UIModularItem>
+				panelMain.Add(panelItems);
+				panelMain.With(() =>
 				{
-					Width = { Percent = 100 },
-					Height = { Percent = 100 }
-				};
-				itemPanel.Add(gridItems);
+					gridItems = new UIGrid<UIModularItem>
+					{
+						Width = { Percent = 100 },
+						Height = { Percent = 100 },
+						Settings = { MaxSelectedItems = 1 }
+					};
+					panelItems.Add(gridItems);
+				});
 
-				UIPanel modulePanel = new UIPanel
+				UIPanel panelModules = new UIPanel
 				{
 					Width = { Percent = 40, Pixels = -64 },
 					Height = { Percent = 100, Pixels = -28 },
@@ -89,37 +99,39 @@ namespace ModularTools.UI
 						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
 					}
 				};
-				panel.Add(modulePanel);
-
-				UIPanel inputBG = new UIPanel
+				panelMain.Add(panelModules);
+				panelModules.With(() =>
 				{
-					Width = { Percent = 100 },
-					Height = { Pixels = 36 },
-					Settings = { BorderColor = Color.Transparent }
-				};
-				modulePanel.Add(inputBG);
+					UIPanel inputBG = new UIPanel
+					{
+						Width = { Percent = 100 },
+						Height = { Pixels = 36 },
+						Settings = { BorderColor = Color.Transparent }
+					};
+					panelModules.Add(inputBG);
 
-				UITextInput input = new UITextInput(ref search)
-				{
-					Width = { Percent = 100 },
-					Height = { Percent = 100 },
-					OnTextChange = () => gridModules.Search(),
-					Settings = { HintText = "<Search>" }
-				};
-				inputBG.Add(input);
+					UITextInput input = new UITextInput(ref search)
+					{
+						Width = { Percent = 100 },
+						Height = { Percent = 100 },
+						OnTextChange = () => gridModules.Search(),
+						Settings = { HintText = "<Search>" }
+					};
+					inputBG.Add(input);
 
-				// todo: category buttons
+					// todo: category buttons
 
-				gridModules = new UIGrid<UIModule>
-				{
-					Width = { Percent = 100 },
-					Height = { Percent = 100, Pixels = -44 },
-					Y = { Pixels = 44 },
-					SearchSelector = item => string.IsNullOrWhiteSpace(search.Value) || TextUtility.Search(item.module.DisplayName.Get().ToLower(), search.Value.ToLower()).Any()
-				};
-				modulePanel.Add(gridModules);
+					gridModules = new UIGrid<UIModule>
+					{
+						Width = { Percent = 100 },
+						Height = { Percent = 100, Pixels = -44 },
+						Y = { Pixels = 44 },
+						SearchSelector = item => string.IsNullOrWhiteSpace(search.Value) || TextUtility.Search(item.Module.DisplayName.Get().ToLower(), search.Value.ToLower()).Any()
+					};
+					panelModules.Add(gridModules);
+				});
 
-				panelInfo = new UIPanel
+				UIPanel panelInfo = new UIPanel
 				{
 					Width = { Percent = 60 },
 					Height = { Percent = 100, Pixels = -28 },
@@ -131,7 +143,103 @@ namespace ModularTools.UI
 						BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
 					}
 				};
-				panel.Add(panelInfo);
+				panelMain.Add(panelInfo);
+				panelInfo.With(() =>
+				{
+					textModule = new UIText("")
+					{
+						Width = { Percent = 100 },
+						Height = { Pixels = 20 }
+					};
+					panelInfo.Add(textModule);
+
+					UIDivider divider = new UIDivider
+					{
+						Width = { Percent = 100 },
+						Y = { Pixels = 28 }
+					};
+					panelInfo.Add(divider);
+
+					textModuleDescription = new UIText("")
+					{
+						Width = { Percent = 100 },
+						Height = { Percent = 100 },
+						Y = { Pixels = 36 }
+					};
+					panelInfo.Add(textModuleDescription);
+
+					textRequirements = new UIText("")
+					{
+						Width = { Percent = 50 },
+						Height = { Pixels = 20 },
+						Y = { Pixels = 100 + 36 }
+					};
+					panelInfo.Add(textRequirements);
+
+					textIncompatible = new UIText("")
+					{
+						Width = { Percent = 50 },
+						Height = { Pixels = 20 },
+						X = { Percent = 100 },
+						Y = { Pixels = 100 + 36 }
+					};
+					panelInfo.Add(textIncompatible);
+
+					buttonInstall = new UITextButton("Install")
+					{
+						Width = { Percent = 50, Pixels = -4 },
+						Height = { Pixels = 30 },
+						Y = { Percent = 100 },
+						Settings =
+						{
+							VerticalAlignment = VerticalAlignment.Center,
+							HorizontalAlignment = HorizontalAlignment.Center
+						}
+					};
+					buttonInstall.OnClick += args =>
+					{
+						args.Handled = true;
+
+						if (selectedItem.CanInstall(selectedModule.Type))
+						{
+							BaseModule clone = selectedModule.Clone();
+							clone.InternalInstall(selectedItem);
+
+							gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.Module == selectedModule).Color = Color.LimeGreen;
+							buttonInstall.Settings.Disabled = true;
+							buttonUninstall.Settings.Disabled = false;
+						}
+					};
+					panelInfo.Add(buttonInstall);
+
+					buttonUninstall = new UITextButton("Uninstall")
+					{
+						Width = { Percent = 50, Pixels = -4 },
+						Height = { Pixels = 30 },
+						X = { Percent = 100 },
+						Y = { Percent = 100 },
+						Settings =
+						{
+							VerticalAlignment = VerticalAlignment.Center,
+							HorizontalAlignment = HorizontalAlignment.Center
+						}
+					};
+					buttonUninstall.OnClick += args =>
+					{
+						args.Handled = true;
+
+						if (selectedItem.CanUninstall(selectedModule.Type))
+						{
+							BaseModule clone = selectedItem.InstalledModules.First(x => x.Type == selectedModule.Type);
+							clone.InternalRemove(selectedItem);
+
+							gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.Module == selectedModule).Color = Color.Red;
+							buttonInstall.Settings.Disabled = false;
+							buttonUninstall.Settings.Disabled = true;
+						}
+					};
+					panelInfo.Add(buttonUninstall);
+				});
 			});
 		}
 
@@ -157,8 +265,6 @@ namespace ModularTools.UI
 					{
 						args.Handled = true;
 
-						foreach (UIModularItem m in gridItems.Children.OfType<UIModularItem>()) m.selected = false;
-						uiModularItem.selected = true;
 						OpenItem(modularItem);
 					};
 
@@ -196,107 +302,20 @@ namespace ModularTools.UI
 		private void OpenModule(BaseModule module)
 		{
 			selectedModule = module;
-			panelInfo.Clear();
 
-			UIText textModule = new UIText(module.DisplayName.Get())
-			{
-				Width = { Percent = 100 },
-				Height = { Pixels = 20 }
-			};
-			panelInfo.Add(textModule);
+			textModule.Text = module.DisplayName.Get();
 
-			UIDivider divider = new UIDivider
-			{
-				Width = { Percent = 100 },
-				Y = { Pixels = 28 }
-			};
-			panelInfo.Add(divider);
+			string text = DataTags.DataTags.GetGroup<ModuleDataGroup>().TagNameToData
+				.Where(pair => pair.Value.Has(module.Type))
+				.Aggregate("", (current, pair) => current + Language.GetTextValue($"Mods.ModularTools.ModuleData.{pair.Key}", pair.Value.Invoke<object>("Get", args: new object[] { module.Type })) + "\n");
+			text += module.Tooltip.Get();
 
-			UIText text = new UIText(module.Tooltip.Get())
-			{
-				Width = { Percent = 100 },
-				Height = { Percent = 100 },
-				Y = { Pixels = 36 }
-			};
-			panelInfo.Add(text);
+			textModuleDescription.Text = text;
 
-			string name = ModuleLoader.GetRequirements(module.Type).Aggregate("Requirements", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
-			UIText textRequirements = new UIText(name)
-			{
-				Width = { Percent = 50 },
-				Height = { Pixels = 20 },
-				Y = { Pixels = 100 + 36 }
-			};
-			panelInfo.Add(textRequirements);
-
-			name = ModuleLoader.GetIncompatibleModules(module.Type).Aggregate("Incompatible", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
-			UIText textBlacklist = new UIText(name)
-			{
-				Width = { Percent = 50 },
-				Height = { Pixels = 20 },
-				X = { Percent = 100 },
-				Y = { Pixels = 100 + 36 }
-			};
-			panelInfo.Add(textBlacklist);
-
-			UITextButton buttonInstall = new UITextButton("Install")
-			{
-				Width = { Percent = 50, Pixels = -4 },
-				Height = { Pixels = 30 },
-				Y = { Percent = 100 },
-				Settings =
-				{
-					VerticalAlignment = VerticalAlignment.Center,
-					HorizontalAlignment = HorizontalAlignment.Center,
-					Disabled = !selectedItem.CanInstall(module.Type)
-				}
-			};
-
-			UITextButton buttonUninstall = new UITextButton("Uninstall")
-			{
-				Width = { Percent = 50, Pixels = -4 },
-				Height = { Pixels = 30 },
-				X = { Percent = 100 },
-				Y = { Percent = 100 },
-				Settings =
-				{
-					VerticalAlignment = VerticalAlignment.Center,
-					HorizontalAlignment = HorizontalAlignment.Center,
-					Disabled = !selectedItem.CanUninstall(module.Type)
-				}
-			};
-
-			buttonInstall.OnClick += args =>
-			{
-				args.Handled = true;
-
-				if (selectedItem.CanInstall(module.Type))
-				{
-					BaseModule clone = module.Clone();
-					clone.InternalInstall(selectedItem);
-
-					gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.module == module).Color = Color.LimeGreen;
-					buttonInstall.Settings.Disabled = true;
-					buttonUninstall.Settings.Disabled = false;
-				}
-			};
-			panelInfo.Add(buttonInstall);
-
-			buttonUninstall.OnClick += args =>
-			{
-				args.Handled = true;
-
-				if (selectedItem.CanUninstall(module.Type))
-				{
-					BaseModule clone = selectedItem.InstalledModules.First(x => x.Type == module.Type);
-					clone.InternalRemove(selectedItem);
-
-					gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.module == module).Color = Color.Red;
-					buttonInstall.Settings.Disabled = false;
-					buttonUninstall.Settings.Disabled = true;
-				}
-			};
-			panelInfo.Add(buttonUninstall);
+			textRequirements.Text = ModuleLoader.GetRequirements(module.Type).Aggregate("Requirements", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
+			textIncompatible.Text = ModuleLoader.GetIncompatibleModules(module.Type).Aggregate("Incompatible", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
+			buttonInstall.Settings.Disabled = !selectedItem.CanInstall(module.Type);
+			buttonUninstall.Settings.Disabled = !selectedItem.CanUninstall(module.Type);
 		}
 	}
 
@@ -304,20 +323,20 @@ namespace ModularTools.UI
 	{
 		public static UpgradeStationUISystem Instance => ModContent.GetInstance<UpgradeStationUISystem>();
 
-		public UpgradeStationUI upgradeState;
+		private UpgradeStationUI ui;
 
 		public override void Load()
 		{
 			if (!Main.dedServ)
 			{
-				upgradeState = new UpgradeStationUI { Display = Display.None };
-				UILayer.Instance.Add(upgradeState);
+				ui = new UpgradeStationUI { Display = Display.None };
+				UILayer.Instance.Add(ui);
 			}
 		}
 
 		public void HandleUI()
 		{
-			ref UpgradeStationUI ui = ref upgradeState;
+			ref UpgradeStationUI ui = ref this.ui;
 			ref Display display = ref ui.Display;
 
 			if (display == Display.None)
