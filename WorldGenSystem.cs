@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using ModularTools.Content.Tiles;
 using Terraria;
 using Terraria.GameContent.Generation;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
@@ -19,6 +21,8 @@ namespace ModularTools
 				y = MathUtility.Clamp(y, 1, Main.maxTilesY - 1);
 
 				if (!Main.tile[x, y].IsAir) return false;
+
+				if (!Sulfur.GetNeighbors(x,y).Any()) return false;
 
 				int found = 0;
 				const int checkSize = 3;

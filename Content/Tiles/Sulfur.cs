@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BaseLibrary.Utility;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,9 +22,43 @@ namespace ModularTools.Content.Tiles
 			AddMapEntry(Color.Yellow);
 		}
 
+		// bug: player places tiles still drop >1 items
 		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 		{
 			Item.NewItem(i * 16, j * 16, 16, 16, ModContent.ItemType<Items.Ingredients.Sulfur>(), Main.rand.Next(1, 4));
+		}
+
+		internal static bool IsValid(int i, int j)
+		{
+			Tile tile = Main.tile[i, j];
+			return i >= 0 && i <= Main.maxTilesX && j >= 0 && j <= Main.maxTilesY && tile != null && !tile.IsAir && !tile.IsActuated && !tile.IsHalfBrick && Main.tileSolid[tile.type];
+		}
+
+		internal static IEnumerable<(Direction, Tile)> GetNeighbors(int i, int j)
+		{
+			if (IsValid(i, j - 1))
+			{
+				Tile tile = Main.tile[i, j - 1];
+				if (tile.Slope != SlopeID.SlopeUpLeft && tile.Slope != SlopeID.SlopeUpRight) yield return (Direction.Up, tile);
+			}
+
+			if (IsValid(i, j + 1))
+			{
+				Tile tile = Main.tile[i, j + 1];
+				if (tile.Slope != SlopeID.SlopeDownLeft && tile.Slope != SlopeID.SlopeDownRight) yield return (Direction.Down, tile);
+			}
+
+			if (IsValid(i - 1, j))
+			{
+				Tile tile = Main.tile[i - 1, j];
+				if (tile.Slope != SlopeID.SlopeDownLeft && tile.Slope != SlopeID.SlopeUpLeft) yield return (Direction.Left, tile);
+			}
+
+			if (IsValid(i + 1, j))
+			{
+				Tile tile = Main.tile[i + 1, j];
+				if (tile.Slope != SlopeID.SlopeDownRight && tile.Slope != SlopeID.SlopeUpRight) yield return (Direction.Right, tile);
+			}
 		}
 
 		public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
@@ -30,24 +67,39 @@ namespace ModularTools.Content.Tiles
 			int style = WorldGen._genRand.Next(4);
 			tile.frameX = (short)(style * 18);
 
-			Tile tileTop = Main.tile[i, j - 1];
-			Tile tileBottom = Main.tile[i, j + 1];
-			Tile tileLeft = Main.tile[i - 1, j];
-			Tile tileRight = Main.tile[i + 1, j];
-			int num23 = -1;
-			int num24 = -1;
-			int num25 = -1;
-			int num26 = -1;
-			if (tileTop != null && !tileTop.IsActuated && tileTop.Slope != SlopeID.HalfBrick && tileTop.Slope != SlopeID.SlopeDownLeft && tileTop.Slope != SlopeID.SlopeDownRight) num24 = tileTop.type;
-			if (tileBottom != null && !tileBottom.IsActuated && tileBottom.Slope != SlopeID.HalfBrick && tileBottom.Slope != SlopeID.SlopeUpLeft && tileBottom.Slope != SlopeID.SlopeUpRight) num23 = tileBottom.type;
-			if (tileLeft != null && !tileLeft.IsActuated) num25 = tileLeft.type;
-			if (tileRight != null && !tileRight.IsActuated) num26 = tileRight.type;
+			var neighbors = GetNeighbors(i, j).ToList();
+			if (neighbors.Count == 0)
+			{
+				WorldGen.KillTile(i, j);
+				return false;
+			}
 
-			if (num23 >= 0 && Main.tileSolid[num23] && !Main.tileSolidTop[num23]) tile.frameY = 0;
-			else if (num25 >= 0 && Main.tileSolid[num25] && !Main.tileSolidTop[num25]) tile.frameY = 54;
-			else if (num26 >= 0 && Main.tileSolid[num26] && !Main.tileSolidTop[num26]) tile.frameY = 36;
-			else if (num24 >= 0 && Main.tileSolid[num24] && !Main.tileSolidTop[num24]) tile.frameY = 18;
-			else WorldGen.KillTile(i, j);
+			foreach (var (direction, neighbor) in neighbors)
+			{
+				if (direction == Direction.Up)
+				{
+					tile.frameY = 18;
+					break;
+				}
+
+				if (direction == Direction.Down)
+				{
+					tile.frameY = 0;
+					break;
+				}
+
+				if (direction == Direction.Left)
+				{
+					tile.frameY = 54;
+					break;
+				}
+
+				if (direction == Direction.Right)
+				{
+					tile.frameY = 36;
+					break;
+				}
+			}
 
 			return false;
 		}

@@ -11,8 +11,8 @@ namespace ModularTools.Content.Items.Ingredients
 
 		public override void SetDefaults()
 		{
-			Item.width = 16;
-			Item.height = 16;
+			Item.width = 14;
+			Item.height = 12;
 
 			Item.maxStack = 999;
 			Item.value = Item.buyPrice(silver: 10);
@@ -23,7 +23,7 @@ namespace ModularTools.Content.Items.Ingredients
 			Item.useAnimation = 15;
 			Item.useTime = 10;
 			Item.autoReuse = true;
-			Item.rare = ItemRarityID.Blue;
+			Item.rare = ItemRarityID.Yellow;
 		}
 	}
 }
