@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using BaseLibrary.Utility;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
@@ -114,7 +115,7 @@ namespace ModularTools.Content.Projectiles
 			Vector2 playerCenter = Main.player[Projectile.owner].MountedCenter;
 			Vector2 center = Projectile.Center;
 			Vector2 distToProj = playerCenter - Projectile.Center;
-			float projRotation = distToProj.ToRotation() - MathHelper.PiOver2;
+			float projRotation = distToProj.ToRotation() - MathUtility.PiOver2;
 			float distance = distToProj.Length();
 
 			while (distance > 30f && !float.IsNaN(distance))

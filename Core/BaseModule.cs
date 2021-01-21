@@ -135,7 +135,7 @@ namespace ModularTools.Core
 
 			item.HeatStorage.ModifyCapacity(-HeatCapacity);
 
-			OnRemoved(item);
+			  OnRemoved(item);
 		}
 
 		public virtual void OnInstalled(ModularItem item)

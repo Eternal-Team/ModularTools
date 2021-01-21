@@ -58,7 +58,7 @@ namespace ModularTools
 				chestplate.HeatStorage.TransferToEnvironment(AmbientTemperature, 1 / 60f);
 				leggings.HeatStorage.TransferToEnvironment(AmbientTemperature, 1 / 60f);
 
-				transfered = helmet.HeatStorage.TransferTo(PlayerHeat, helmet.insulation);
+				transfered = helmet.HeatStorage.TransferTo(PlayerHeat, helmet.Insulation);
 				transfered += chestplate.HeatStorage.TransferTo(PlayerHeat, chestplate.insulation);
 				transfered += leggings.HeatStorage.TransferTo(PlayerHeat, leggings.insulation);
 			}

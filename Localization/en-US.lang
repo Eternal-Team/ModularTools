@@ -21,3 +21,4 @@ ModuleName.LeadAcidBattery=Lead-Acid Battery
 ModuleName.LFPBattery=Lithium Iron Phosphate Battery
 
 ModuleData.Defense=Provides {0} defense
+ModuleData.EnergyCapacity=Increases energy storage by {0}J

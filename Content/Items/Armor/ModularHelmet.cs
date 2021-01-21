@@ -14,7 +14,7 @@ namespace ModularTools.Content.Items.Armor
 
 		public override string EquipTexture => ModularTools.TexturePath + "Armor/ModularArmor_Head";
 
-		public float insulation = 1000f;
+		public float Insulation = 1000f;
 
 		public override void OnCreate(ItemCreationContext context)
 		{

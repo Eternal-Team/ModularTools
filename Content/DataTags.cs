@@ -13,6 +13,9 @@ namespace ModularTools.DataTags
 	public static class ModuleData
 	{
 		public static readonly DataTagData<int> Defense = DataTags.Get<ModuleDataGroup, int>(nameof(Defense));
+		public static readonly DataTagData<long> HeatCapacity = DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity));
+		public static readonly DataTagData<long> EnergyCapacity = DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity));
+		public static readonly DataTagData<ulong> EnergyTransfer = DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer));
 	}
 
 	public static class DataTags
@@ -63,7 +66,7 @@ namespace ModularTools.DataTags
 		}
 
 		public bool Has(int id) => entryList.Contains(id);
-		
+
 		public IReadOnlyList<int> GetEntries() => readonlyEntryList;
 	}
 
@@ -79,6 +82,18 @@ namespace ModularTools.DataTags
 		}
 
 		public T Get(int id) => idToValue[id];
+
+		public bool TryGet(int id, out T value)
+		{
+			if (entryList.Contains(id))
+			{
+				value = idToValue[id];
+				return true;
+			}
+
+			value = default;
+			return false;
+		}
 
 		public void Set(int id, T value)
 		{

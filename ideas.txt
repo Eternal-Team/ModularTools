@@ -12,37 +12,5 @@ environmental effects
     underground ice biome - very low temperatures
     water - electrocution
 
-PRE-HM
-
 insulation
     insulation protects against cold, prevents heat from escaping
-
-skin -> air -> clothes -> air -> armor -> air
-
-player = 1.9 m^2
-player = 4.7 W/m2*K (3 W with clothes)
-player = 80 * 3500 J/K
-player = up to 120W heat gen
-
-k = h * A / C
-	k [1/s] is the cooling coefficient,
-	h [W/(m² * K)] is the heat transfer coefficient,
-	A [m²] is the area of the heat exchange,
-	C [J/K] is the heat capacity.
-
-T = T_ambient + (T_initial - T_ambient) * exp(- k * t) + (120*t) / (80 * 3500)
-	T [K] is the temperature of the object at the time t,
-	T_ambient [K] is the ambient temperature,
-	T_initial [K] is the initial temperature of the object,
-	k [1/s] is the cooling coefficient,
-	t [s] is the time of the cooling.
-
-T = 20 + (37 - 20) * exp(-0.000020357 * 10) + min(energy_lost, can_generate_player) / (80 * 3500) + active/passive heat gen + heating from armor - cooling from armor
-energy lost = (36.995 - 37) * 280000 = 1400 J
-can generate up to 1200 J 
-
-heat capacity of armor is sum of components
-
-dissapation = heat transfer coefficient * surface area * difference between temperatures
-
-https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling

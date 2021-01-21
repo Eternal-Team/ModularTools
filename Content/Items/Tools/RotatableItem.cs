@@ -40,11 +40,11 @@ namespace ModularTools.Content.Items.Tools
 			if (drawInfo.compFrontArmFrame.Width != 0 && drawInfo.compFrontArmFrame.X / drawInfo.compFrontArmFrame.Width >= 7)
 				vector += new Vector2(!drawInfo.playerEffect.HasFlag(SpriteEffects.FlipHorizontally) ? 1 : -1, !drawInfo.playerEffect.HasFlag(SpriteEffects.FlipVertically) ? 1 : -1);
 
-			float targetItemRotation = MathHelper.PiOver2 - MathUtility.AngleBetween(Main.MouseWorld - player.Center, -Vector2.UnitY);
+			float targetItemRotation = MathUtility.PiOver2 - MathUtility.AngleBetween(Main.MouseWorld - player.Center, -Vector2.UnitY);
 
 			drawInfo.compositeFrontArmRotation = targetItemRotation;
 
-			if (player.direction == 1) drawInfo.compositeFrontArmRotation -= MathHelper.Pi;
+			if (player.direction == 1) drawInfo.compositeFrontArmRotation -= MathUtility.PI;
 
 			drawInfo.DrawDataCache.Add(new DrawData(
 				texture,
