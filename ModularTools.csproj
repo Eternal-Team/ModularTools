@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
     <ProjectReference Include="..\EnergyLibrary\EnergyLibrary.csproj" />
+    <ProjectReference Include="..\FluidLibrary\FluidLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="README.md" />
