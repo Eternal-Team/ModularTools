@@ -3,6 +3,7 @@ using System.Reflection;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
 using Terraria;
+using Player = On.Terraria.Player;
 
 namespace ModularTools
 {
@@ -14,6 +15,10 @@ namespace ModularTools
 			var methodInfo = nestedType.GetMethod("<GenerateWorld>b__12", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
 			HookEndpointManager.Modify(methodInfo, new Action<ILContext>(GenerationPass_SmallHoles));
+			Player.IsAValidEquipmentSlotForIteration += (orig, self, slot) =>
+			{
+				return slot < 3 || slot == 10 || slot == 11 || slot == 12;
+			};
 		}
 	}
 }
