@@ -36,7 +36,13 @@ namespace ModularTools
 					}
 				}
 
-				if (found < 2) WorldGen.PlaceTile(x, y, ModContent.TileType<Sulfur>(), true);
+				if (found < 2)
+				{
+					WorldGen.PlaceTile(x, y, ModContent.TileType<Sulfur>(), true);
+					Tile tile = Main.tile[x, y];
+					int style = WorldGen._genRand.Next(4);
+					tile.frameX = (short)(style * 18);
+				}
 
 				return true;
 			}
