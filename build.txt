@@ -1,4 +1,4 @@
-author = Itorius, orian34 & team
+author = Itorius & team
 version = 1.0
 displayName = Modular Tools
 homepage = https://terraria.itorius.com/

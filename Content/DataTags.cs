@@ -1,105 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
+using BaseLibrary.Utility;
 using ModularTools.Core;
 using Terraria.ModLoader;
 
-namespace ModularTools.DataTags
+namespace ModularTools.DataTags;
+
+public class ModuleDataGroup : DataTagGroup
 {
-	public class ModuleDataGroup : DataTagGroup
+	public override int TypeCount => ModuleLoader.Count;
+}
+
+/// <summary>
+/// Used to register common stats of modules
+/// </summary>
+public static class ModuleData
+{
+	public static readonly DataTagData<int> Defense = Core.DataTags.Get<ModuleDataGroup, int>(nameof(Defense));
+	public static readonly DataTagData<long> HeatCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity));
+	public static readonly DataTagData<long> EnergyCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity)).AddLocalization(l => $"Capacity: {TextUtility.ToSI(l)}J");
+	public static readonly DataTagData<ulong> EnergyTransfer = Core.DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer)).AddLocalization(l => $"Transfer: {TextUtility.ToSI(l)}J");
+}
+
+public class ModuleTagGroup : DataTagGroup
+{
+	public override int TypeCount => ModuleLoader.Count;
+}
+
+/// <summary>
+/// Used to sort modules into groups
+/// </summary>
+public static class ModuleTags
+{
+	public static readonly ModuleGroup Plating = ModContent.GetInstance<GroupSystem>().Get(nameof(Plating));
+	public static readonly ModuleGroup Battery = ModContent.GetInstance<GroupSystem>().Get(nameof(Battery));
+}
+
+public class GroupSystem : ModType
+{
+	internal Dictionary<string, ModuleGroup> TagNameToData = new(StringComparer.InvariantCultureIgnoreCase);
+
+	protected sealed override void Register() => ModTypeLookup<GroupSystem>.Register(this);
+
+	public sealed override void Unload()
 	{
-		public override int TypeCount => ModuleLoader.Count;
+		TagNameToData.Clear();
+
+		TagNameToData = null;
 	}
 
-	public static class ModuleData
+	public ModuleGroup Get(string name)
 	{
-		public static readonly DataTagData<int> Defense = DataTags.Get<ModuleDataGroup, int>(nameof(Defense));
-		public static readonly DataTagData<long> HeatCapacity = DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity));
-		public static readonly DataTagData<long> EnergyCapacity = DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity));
-		public static readonly DataTagData<ulong> EnergyTransfer = DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer));
+		if (!TagNameToData.TryGetValue(name, out var data))
+		{
+			TagNameToData[name] = data = new ModuleGroup(name);
+		}
+
+		return data;
+	}
+}
+
+public class ModuleGroup
+{
+	public readonly ModTranslation DisplayName;
+
+	public ModuleGroup(string name)
+	{
+		DisplayName = LocalizationLoader.GetOrCreateTranslation("Mods.ModularTools.ModuleGroup." + name);
 	}
 
-	public static class DataTags
+	private readonly bool[] idToValue = new bool[ModuleLoader.Count];
+
+	public void Set(BaseModule module)
 	{
-		internal static readonly Dictionary<Type, DataTagGroup> TagGroupsByType = new Dictionary<Type, DataTagGroup>();
-
-		public static DataTagData<K> Get<T, K>(string tagName) where T : DataTagGroup => GetGroup<T>().GetTag<K>(tagName);
-
-		public static T GetGroup<T>() where T : DataTagGroup => ModContent.GetInstance<T>();
-	}
-
-	[Autoload]
-	public abstract class DataTagGroup : ModType
-	{
-		public abstract int TypeCount { get; }
-
-		internal Dictionary<string, DataTagData> TagNameToData = new Dictionary<string, DataTagData>(StringComparer.InvariantCultureIgnoreCase);
-
-		protected sealed override void Register() => ModTypeLookup<DataTagGroup>.Register(this);
-
-		public sealed override void Unload()
-		{
-			TagNameToData.Clear();
-
-			TagNameToData = null;
-		}
-
-		public DataTagData<T> GetTag<T>(string tagName)
-		{
-			if (!TagNameToData.TryGetValue(tagName, out var data))
-			{
-				TagNameToData[tagName] = data = new DataTagData<T>(TypeCount);
-			}
-
-			return (DataTagData<T>)data;
-		}
-	}
-
-	public abstract class DataTagData
-	{
-		protected readonly List<int> entryList;
-		protected readonly IReadOnlyList<int> readonlyEntryList;
-
-		internal DataTagData()
-		{
-			entryList = new List<int>();
-			readonlyEntryList = entryList.AsReadOnly();
-		}
-
-		public bool Has(int id) => entryList.Contains(id);
-
-		public IReadOnlyList<int> GetEntries() => readonlyEntryList;
-	}
-
-	public sealed class DataTagData<T> : DataTagData
-	{
-		private readonly T[] idToValue;
-
-		internal DataTagData(int maxEntries)
-		{
-			idToValue = new T[maxEntries];
-			// entryList = new List<int>();
-			// readonlyEntryList = entryList.AsReadOnly();
-		}
-
-		public T Get(int id) => idToValue[id];
-
-		public bool TryGet(int id, out T value)
-		{
-			if (entryList.Contains(id))
-			{
-				value = idToValue[id];
-				return true;
-			}
-
-			value = default;
-			return false;
-		}
-
-		public void Set(int id, T value)
-		{
-			idToValue[id] = value;
-
-			if (!entryList.Contains(id)) entryList.Add(id);
-		}
+		idToValue[module.Type] = true;
 	}
 }

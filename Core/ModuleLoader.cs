@@ -1,71 +1,87 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using ModularTools.DataTags;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Tags;
 
-namespace ModularTools.Core
+namespace ModularTools.Core;
+
+internal static class ModuleLoader
 {
-	internal static class ModuleLoader
+	#region Loader
+	private static List<BaseModule> modules = new();
+
+	internal static int NextTypeID;
+
+	public static int Count => NextTypeID;
+
+	internal static void RegisterModule(BaseModule module)
 	{
-		internal static List<BaseModule> modules = new List<BaseModule>();
+		module.Type = NextTypeID++;
+		modules.Add(module);
 
-		internal static Dictionary<int, List<int>> validItemsForModule = new Dictionary<int, List<int>>();
-		internal static Dictionary<int, List<int>> validModulesForItem = new Dictionary<int, List<int>>();
+		// validItemsForModule.Add(module.Type, new List<int>());
 
-		internal static Dictionary<int, List<int>> requirements = new Dictionary<int, List<int>>();
+		requiredModules.Add(module.Type, new List<int>());
+		incompatibleModules.Add(module.Type, new List<int>());
+		incompatibleGroups.Add(module.Type, new List<ModuleGroup>());
+	}
 
-		internal static Dictionary<int, List<int>> blacklistTypes = new Dictionary<int, List<int>>();
-		internal static Dictionary<int, List<TagData>> blacklistGroups = new Dictionary<int, List<TagData>>();
+	public static int ModuleType<T>() where T : BaseModule => ModContent.GetInstance<T>()?.Type ?? -1;
 
-		internal static int NextTypeID;
+	public static BaseModule GetModule(int type) => modules[type];
 
-		public static int Count => NextTypeID;
-
-		internal static void RegisterModule(BaseModule module)
+	internal static void AddRecipes()
+	{
+		foreach (BaseModule module in modules)
 		{
-			module.Type = NextTypeID++;
-			modules.Add(module);
-
-			validItemsForModule.Add(module.Type, new List<int>());
-
-			requirements.Add(module.Type, new List<int>());
-			blacklistTypes.Add(module.Type, new List<int>());
-			blacklistGroups.Add(module.Type, new List<TagData>());
+			module.AddRecipes();
 		}
+	}
+	#endregion
 
-		public static int ModuleType<T>() where T : BaseModule => ModContent.GetInstance<T>()?.Type ?? -1;
+	// private static Dictionary<int, List<int>> validItemsForModule = new();
 
-		public static BaseModule GetModule(int type) => modules[type];
+	private static Dictionary<int, List<int>> validModulesForItem = new();
 
-		public static IEnumerable<int> GetRequirements<T>() where T : BaseModule => requirements[ModuleType<T>()];
+	private static Dictionary<int, List<int>> requiredModules = new();
+	private static Dictionary<int, List<int>> incompatibleModules = new();
+	private static Dictionary<int, List<ModuleGroup>> incompatibleGroups = new();
 
-		public static IEnumerable<int> GetRequirements(int type) => requirements[type];
+	public static void RegisterModularItem(ModularItem item)
+	{
+		validModulesForItem.TryAdd(item.Type, new List<int>());
+	}
 
-		public static IEnumerable<int> GetIncompatibleModules<T>() where T : BaseModule
-		{
-			int type = ModuleType<T>();
+	public static List<int> GetRequiredModules(int type)
+	{
+		if (type < 0 || type > Count) throw new Exception();
+		return requiredModules[type];
+	}
 
-			foreach (int module in blacklistTypes[type]) yield return module;
-			foreach (int module in blacklistGroups[type].SelectMany(tag => tag.GetEntries()))
-			{
-				if (module != type) yield return module;
-			}
-		}
+	public static List<int> GetRequiredModules<T>() where T : BaseModule => GetRequiredModules(ModuleType<T>());
 
-		public static IEnumerable<int> GetIncompatibleModules(int type)
-		{
-			foreach (int module in blacklistTypes[type]) yield return module;
-			foreach (int module in blacklistGroups[type].SelectMany(tag => tag.GetEntries()))
-			{
-				if (module != type) yield return module;
-			}
-		}
+	public static List<int> GetIncompatibleModules(int type)
+	{
+		if (type < 0 || type > Count) throw new Exception();
 
-		public static T CreateInstance<T>() where T : BaseModule
-		{
-			T instance = (T)ModContent.GetInstance<T>().Clone();
-			instance.SetDefaults();
-			return instance;
-		}
+		return incompatibleModules[type];
+	}
+
+	public static List<int> GetIncompatibleModules<T>() where T : BaseModule => GetIncompatibleModules(ModuleType<T>());
+
+	public static List<ModuleGroup> GetIncompatibleGroups(int type)
+	{
+		if (type < 0 || type > Count) throw new Exception();
+
+		return incompatibleGroups[type];
+	}
+
+	public static List<ModuleGroup> GetIncompatibleGroups<T>() where T : BaseModule => GetIncompatibleGroups(ModuleType<T>());
+
+	public static List<int> GetValidModulesForItem(int type)
+	{
+		if (type < 0 || type > ItemLoader.ItemCount) throw new Exception();
+
+		return validModulesForItem[type];
 	}
 }

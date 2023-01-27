@@ -1,164 +1,160 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using BaseLibrary.Utility;
+using ModularTools.DataTags;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.ModLoader.Tags;
 
-namespace ModularTools.Core
+namespace ModularTools.Core;
+
+public abstract class BaseModule : ModTexturedType
 {
-	public abstract class BaseModule : ModTexturedType
+	public override string Texture => BaseLibrary.BaseLibrary.PlaceholderTexture;
+
+	public ModTranslation DisplayName { get; internal set; }
+	public ModTranslation Tooltip { get; internal set; }
+	public int Type { get; internal set; }
+
+	#region Loading
+	protected override void Register()
 	{
-		public override string Texture => BaseLibrary.BaseLibrary.PlaceholderTexture;
+		ModuleLoader.RegisterModule(this);
 
-		public ModTranslation DisplayName { get; internal set; }
-		public ModTranslation Tooltip { get; internal set; }
-		public int Type { get; internal set; }
+		ModTypeLookup<BaseModule>.Register(this);
 
-		#region Loading
-		private static MethodInfo GetOrCreateTranslation = typeof(Mod).GetMethod("GetOrCreateTranslation", ReflectionUtility.DefaultFlags);
+		DisplayName = LocalizationLoader.GetOrCreateTranslation(Mod, "ModuleName." + Name);
+		Tooltip = LocalizationLoader.GetOrCreateTranslation(Mod, "ModuleTooltip." + Name);
+	}
 
-		protected override void Register()
+	public override void SetupContent()
+	{
+		SetStaticDefaults();
+
+		if (DisplayName.IsDefault())
+			DisplayName.SetDefault(Regex.Replace(Name, "([A-Z])", " $1").Trim());
+
+		// SetDefaults();
+	}
+
+	public sealed override void Load()
+	{
+		base.Load();
+	}
+
+	public sealed override void Unload()
+	{
+		base.Unload();
+	}
+
+	public virtual BaseModule Clone() => (BaseModule)MemberwiseClone();
+	#endregion
+
+	#region Requirements
+	protected void AddRequiredModule<T>() where T : BaseModule
+	{
+		if (GetType() == typeof(T)) throw new Exception("Module can't require itself");
+
+		BaseModule dependency = ModContent.GetInstance<T>();
+		if (GetRequirements(dependency).Contains(Type)) throw new Exception($"Adding '{typeof(T).FullName}' as requirement to '{GetType().FullName}' produces a circular dependency");
+
+		ModuleLoader.GetRequiredModules(Type).Add(dependency.Type);
+
+		IEnumerable<int> GetRequirements(BaseModule root)
 		{
-			ModuleLoader.RegisterModule(this);
-
-			ModTypeLookup<BaseModule>.Register(this);
-
-			DisplayName = GetOrCreateTranslation.Invoke<ModTranslation>(Mod, $"Mods.{Mod.Name}.ModuleName.{Name}", false);
-			Tooltip = GetOrCreateTranslation.Invoke<ModTranslation>(Mod, $"Mods.{Mod.Name}.ModuleTooltip.{Name}", true);
-		}
-
-		public override void SetupContent()
-		{
-			SetStaticDefaults();
-
-			if (DisplayName.IsDefault())
-				DisplayName.SetDefault(Regex.Replace(Name, "([A-Z])", " $1").Trim());
-
-			SetDefaults();
-		}
-
-		public sealed override void Load()
-		{
-			base.Load();
-		}
-
-		public sealed override void Unload()
-		{
-			base.Unload();
-		}
-		#endregion
-
-		public int HeatCapacity;
-
-		public virtual BaseModule Clone() => (BaseModule)MemberwiseClone();
-
-		protected void AddRequiredModule<T>() where T : BaseModule
-		{
-			if (GetType() == typeof(T)) throw new Exception("Module can't require itself");
-
-			BaseModule dependency = ModContent.GetInstance<T>();
-			if (GetRequirements(dependency).Contains(Type)) throw new Exception($"Adding '{typeof(T).FullName}' as requirement produces a circular dependency");
-
-			ModuleLoader.requirements[Type].Add(dependency.Type);
-
-			IEnumerable<int> GetRequirements(BaseModule root)
+			var nodes = new Stack<int>(new[] { root.Type });
+			while (nodes.Any())
 			{
-				var nodes = new Stack<int>(new[] { root.Type });
-				while (nodes.Any())
-				{
-					int node = nodes.Pop();
-					yield return node;
-					foreach (var n in ModuleLoader.requirements[node]) nodes.Push(n);
-				}
+				int node = nodes.Pop();
+				yield return node;
+				foreach (var n in ModuleLoader.GetRequiredModules(node)) nodes.Push(n);
 			}
 		}
+	}
 
-		protected void AddIncompatibleModules(TagData tag)
+	protected void AddIncompatibleModules(ModuleGroup tag)
+	{
+		ModuleLoader.GetIncompatibleGroups(Type).Add(tag);
+	}
+
+	protected void AddIncompatibleModule<T>() where T : BaseModule
+	{
+		if (GetType() == typeof(T)) throw new Exception("Module can't be incompatible to itself");
+
+		ModuleLoader.GetIncompatibleModules(Type).Add(ModuleLoader.ModuleType<T>());
+	}
+
+	protected void AddValidModularItems(DataTagData<bool> tag)
+	{
+		foreach (int type in tag.GetEntries())
 		{
-			ModuleLoader.blacklistGroups[Type].Add(tag);
+			ModuleLoader.GetValidModulesForItem(type).Add(Type);
+		}
+	}
+
+	protected void AddValidModularItem<T>() where T : ModularItem
+	{
+		ModuleLoader.GetValidModulesForItem(ModContent.ItemType<T>()).Add(Type);
+	}
+	#endregion
+
+	public virtual void AddRecipes()
+	{
+	}
+
+	internal void OnInstalledInternal(ModularItem item)
+	{
+		item.EnergyStorage.ModifyCapacity(ModuleData.EnergyCapacity.Get(Type));
+
+		ulong max = 0;
+		foreach (BaseModule module in item.InstalledModules)
+		{
+			if (ModuleData.EnergyTransfer.TryGet(module.Type, out ulong val) && val > max) max = val;
 		}
 
-		protected void AddIncompatibleModule<T>() where T : BaseModule
-		{
-			if (GetType() == typeof(T)) throw new Exception("Module can't be incompatible to itself");
+		item.EnergyStorage.SetMaxTransfer(max);
+		
+		OnInstalled(item);
+	}
+	
+	public virtual void OnInstalled(ModularItem item)
+	{
+	}
 
-			BaseModule dependency = ModContent.GetInstance<T>();
-			ModuleLoader.blacklistTypes[Type].Add(dependency.Type);
+	internal void OnRemovedInternal(ModularItem item)
+	{
+		item.EnergyStorage.ModifyCapacity(-ModuleData.EnergyCapacity.Get(Type));
+
+		ulong max = 0;
+		foreach (BaseModule module in item.InstalledModules)
+		{
+			if (ModuleData.EnergyTransfer.TryGet(module.Type, out ulong val) && val > max) max = val;
 		}
 
-		protected void AddValidModularItems(TagData tag)
-		{
-			foreach (int type in tag.GetEntries())
-			{
-				ModuleLoader.validItemsForModule[Type].Add(type);
-				ModuleLoader.validModulesForItem[type].Add(Type);
-			}
-		}
+		item.EnergyStorage.SetMaxTransfer(max);
+		
+		OnRemoved(item);
+	}
+	
+	public virtual void OnRemoved(ModularItem item)
+	{
+	}
 
-		protected void AddValidModularItem<T>() where T : ModularItem
-		{
-			int type = ModContent.ItemType<T>();
+	public virtual void OnUpdate(ModularItem item, Player player)
+	{
+	}
 
-			ModuleLoader.validItemsForModule[Type].Add(type);
-			ModuleLoader.validModulesForItem[type].Add(Type);
-		}
+	public virtual void SaveData(TagCompound tag)
+	{
+	}
 
-		public virtual void SetStaticDefaults()
-		{
-		}
+	public virtual void LoadData(TagCompound tag)
+	{
+	}
 
-		public virtual void SetDefaults()
-		{
-		}
-
-		public virtual void AddRecipes()
-		{
-		}
-
-		internal void InternalInstall(ModularItem item)
-		{
-			item.InstalledModules.Add(this);
-
-			item.HeatStorage.ModifyCapacity(HeatCapacity);
-
-			OnInstalled(item);
-		}
-
-		internal void InternalRemove(ModularItem item)
-		{
-			item.InstalledModules.Remove(this);
-
-			item.HeatStorage.ModifyCapacity(-HeatCapacity);
-
-			  OnRemoved(item);
-		}
-
-		public virtual void OnInstalled(ModularItem item)
-		{
-		}
-
-		public virtual void OnRemoved(ModularItem item)
-		{
-		}
-
-		public virtual void OnUpdate(ModularItem item, Player player)
-		{
-		}
-
-		public virtual TagCompound Save() => null;
-
-		public virtual void Load(TagCompound tag)
-		{
-		}
-
-		protected ModuleRecipe Create()
-		{
-			return ModuleRecipe.Create(Mod, this);
-		}
+	protected ModuleRecipe CreateRecipe()
+	{
+		return ModuleRecipe.Create(Mod, this);
 	}
 }

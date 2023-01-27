@@ -4,51 +4,54 @@ using MonoMod.RuntimeDetour.HookGen;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace ModularTools.Core
+namespace ModularTools.Core;
+
+[Autoload(false)]
+public class ModuleSerializer : TagSerializer<BaseModule, TagCompound>
 {
-	[Autoload(false)]
-	public class ModuleSerializer : TagSerializer<BaseModule, TagCompound>
+	private static ModuleSerializer Instance = new ModuleSerializer();
+
+	private delegate bool orig_TryGetSerializer(Type type, out TagSerializer serializer);
+
+	private delegate bool hook_TryGetSerializer(orig_TryGetSerializer orig, Type type, out TagSerializer serializer);
+
+	internal static void Load()
 	{
-		private static ModuleSerializer Instance = new ModuleSerializer();
+		Instance = new ModuleSerializer();
 
-		private delegate bool orig_TryGetSerializer(Type type, out TagSerializer serializer);
-
-		private delegate bool hook_TryGetSerializer(orig_TryGetSerializer orig, Type type, out TagSerializer serializer);
-
-		internal static void Load()
+		HookEndpointManager.Add<hook_TryGetSerializer>(typeof(TagSerializer).GetMethod("TryGetSerializer", ReflectionUtility.DefaultFlags_Static), (hook_TryGetSerializer)((orig_TryGetSerializer orig, Type type, out TagSerializer serializer) =>
 		{
-			Instance = new ModuleSerializer();
-
-			HookEndpointManager.Add<hook_TryGetSerializer>(typeof(TagSerializer).GetMethod("TryGetSerializer", ReflectionUtility.DefaultFlags_Static), (hook_TryGetSerializer)((orig_TryGetSerializer orig, Type type, out TagSerializer serializer) =>
+			if (type == typeof(BaseModule) || type.IsSubclassOf(typeof(BaseModule)))
 			{
-				if (type == typeof(BaseModule) || type.IsSubclassOf(typeof(BaseModule)))
-				{
-					serializer = Instance;
-					return true;
-				}
+				serializer = Instance;
+				return true;
+			}
 
-				return orig(type, out serializer);
-			}));
-		}
+			return orig(type, out serializer);
+		}));
+	}
 
-		public override TagCompound Serialize(BaseModule value) => new TagCompound
+	public override TagCompound Serialize(BaseModule value)
+	{
+		TagCompound tag = new TagCompound
 		{
 			["Mod"] = value.Mod.Name,
 			["Name"] = value.Name,
-			["Data"] = value.Save()
 		};
+		value.SaveData(tag);
+		return tag;
+	}
 
-		public override BaseModule Deserialize(TagCompound tag)
+	public override BaseModule Deserialize(TagCompound tag)
+	{
+		if (ModContent.TryFind(tag.GetString("Mod"), tag.GetString("Name"), out BaseModule ModItem))
 		{
-			if (ModContent.TryFind(tag.GetString("Mod"), tag.GetString("Name"), out BaseModule ModItem))
-			{
-				BaseModule module = ModItem.Clone();
-				module.Load(tag.GetCompound("Data"));
-				return module;
-			}
-
-			// todo: UnloadedModule
-			throw new Exception();
+			BaseModule module = ModItem.Clone();
+			module.LoadData(tag);
+			return module;
 		}
+
+		// todo: UnloadedModule
+		throw new Exception();
 	}
 }

@@ -3,9 +3,9 @@
   <Import Project="..\Mods.targets" />
   <PropertyGroup>
     <AssemblyName>ModularTools</AssemblyName>
-    <TargetFramework>net45</TargetFramework>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
@@ -18,5 +18,8 @@
   <ItemGroup>
     <None Remove="README.md" />
     <None Remove=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Textures\Armor" />
   </ItemGroup>
 </Project>

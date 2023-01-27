@@ -1,0 +1,45 @@
+Mods: {
+	ModularTools: {
+		ModuleData: {
+			Defense: "Provides {0} defense"
+            EnergyCapacity: "Increases energy storage by {0}J"
+            EnergyTransfer: "Increases energy transfer to {0}W"
+		}
+		
+		ModuleTooltip: {
+			LeadAcidBattery: A rudimentary battery to get you started.
+		}
+	
+		ModuleGroup: {
+			Plating: Plating
+			Battery: Battery
+		}
+	
+		ItemName: {
+			ModularBore: Modular Bore
+            ModularChestplate: Modular Chestplate
+            ModularHelmet: Modular Helmet
+            ModularLeggings: Modular Leggings
+            Brain: Brain
+            Sulfur: Sulfur
+		}
+		
+		ItemTooltip: {
+			Brain: It feels...squishy
+		}
+		
+		ModuleName: {
+			CopperPlating: Copper Plating
+            IronPlating: Iron Plating
+            SteelPlating: Steel Plating
+            AluminiumPlating: Aluminium Plating
+            GoldPlating: Gold Plating
+            TungstenCarbidePlating: Tungsten Carbide Plating
+            DDTungstenCarbidePlating: Diamond-doped Tungsten Carbide Plating
+            
+            NickelIronBattery: Nickel-Iron Battery
+            LeadAcidBattery: Lead-Acid Battery
+            LFPBattery: Lithium Iron Phosphate Battery
+		}
+	}
+}
