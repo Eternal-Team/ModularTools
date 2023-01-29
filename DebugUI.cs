@@ -26,6 +26,8 @@ public class DebugUISystem : ModSystem
 
 					float x = 20f;
 					float y = 100f;
+					
+					DebugPrint("kek");
 					// DebugPrint($"Ambient temperature: {Utility.ToDegrees(player.AmbientTemperature):F1} C");
 					// DebugPrint($"Player temperature: {Utility.ToDegrees(player.PlayerHeat.Temperature):F1} C");
 					// DebugPrint($"Player temp balancing: {player.heatBalancing:F1} W");

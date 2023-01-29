@@ -16,15 +16,10 @@ public class ModuleDataGroup : DataTagGroup
 /// </summary>
 public static class ModuleData
 {
-	public static readonly DataTagData<int> Defense = Core.DataTags.Get<ModuleDataGroup, int>(nameof(Defense));
-	public static readonly DataTagData<long> HeatCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity));
-	public static readonly DataTagData<long> EnergyCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity)).AddLocalization(l => $"Capacity: {TextUtility.ToSI(l)}J");
-	public static readonly DataTagData<ulong> EnergyTransfer = Core.DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer)).AddLocalization(l => $"Transfer: {TextUtility.ToSI(l)}J");
-}
-
-public class ModuleTagGroup : DataTagGroup
-{
-	public override int TypeCount => ModuleLoader.Count;
+	public static readonly DataTagData<int> Defense = Core.DataTags.Get<ModuleDataGroup, int>(nameof(Defense)).AddLocalization(l => $"Provides {l} defense");
+	public static readonly DataTagData<long> HeatCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity)).AddLocalization(l => $"Heat Capacity: {TextUtility.ToSI(l)}J");
+	public static readonly DataTagData<long> EnergyCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity)).AddLocalization(l => $"Energy Capacity: {TextUtility.ToSI(l)}J");
+	public static readonly DataTagData<ulong> EnergyTransfer = Core.DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer)).AddLocalization(l => $"Energy Transfer: {TextUtility.ToSI(l)}J");
 }
 
 /// <summary>
@@ -32,8 +27,10 @@ public class ModuleTagGroup : DataTagGroup
 /// </summary>
 public static class ModuleTags
 {
-	public static readonly ModuleGroup Plating = ModContent.GetInstance<GroupSystem>().Get(nameof(Plating));
-	public static readonly ModuleGroup Battery = ModContent.GetInstance<GroupSystem>().Get(nameof(Battery));
+	private static ModuleGroup Get(string name) => ModContent.GetInstance<GroupSystem>().Get(name);
+
+	public static readonly ModuleGroup Plating = Get(nameof(Plating));
+	public static readonly ModuleGroup Battery = Get(nameof(Battery));
 }
 
 public class GroupSystem : ModType

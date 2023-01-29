@@ -2,11 +2,16 @@
 using BaseLibrary.Utility;
 using ModularTools.Core;
 using Terraria;
+using Terraria.ID;
 
 namespace ModularTools;
 
 public partial class MTPlayer
 {
+	public override void PostUpdate()
+	{
+	}
+
 	// public bool WearingModularSet =>
 	// 	!Player.armor[0].IsAir && Player.armor[0].ModItem is ModularHelmet &&
 	// 	!Player.armor[1].IsAir && Player.armor[1].ModItem is ModularChestplate &&

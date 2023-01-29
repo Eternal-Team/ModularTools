@@ -34,7 +34,7 @@ public class ModularBore : ModularItem, IRotatableItem
 
 	public override void UpdateInventory(Player player)
 	{
-		foreach (BaseModule module in InstalledModules) module.OnUpdate(this, player);
+		foreach (BaseModule module in InstalledModules) module.OnUpdateInternal(this, player);
 	}
 
 	public Vector2 GetOrigin(Player player) => player.direction == 1 ? new Vector2(50f, 18f) : new Vector2(50f, 8f);

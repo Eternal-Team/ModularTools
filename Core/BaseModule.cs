@@ -114,10 +114,10 @@ public abstract class BaseModule : ModTexturedType
 		}
 
 		item.EnergyStorage.SetMaxTransfer(max);
-		
+
 		OnInstalled(item);
 	}
-	
+
 	public virtual void OnInstalled(ModularItem item)
 	{
 	}
@@ -133,12 +133,19 @@ public abstract class BaseModule : ModTexturedType
 		}
 
 		item.EnergyStorage.SetMaxTransfer(max);
-		
+
 		OnRemoved(item);
 	}
-	
+
 	public virtual void OnRemoved(ModularItem item)
 	{
+	}
+
+	internal void OnUpdateInternal(ModularItem item, Player player)
+	{
+		if (ModuleData.Defense.TryGet(Type, out int val)) player.statDefense += val;
+
+		OnUpdate(item, player);
 	}
 
 	public virtual void OnUpdate(ModularItem item, Player player)

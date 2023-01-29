@@ -57,10 +57,10 @@ public class WorldGenSystem : ModSystem
 			{
 				progress.Message = "Crystallizing sulfur";
 
-				foreach (Point poolLocation in Hooking.PoolLocations)
-				{
-					if (poolLocation.Y > WorldGen.lavaLine) WorldUtils.Gen(poolLocation, new Shapes.Circle(10), new GenerateSulfurAction());
-				}
+				// foreach (Point poolLocation in Hooking.PoolLocations)
+				// {
+				// 	if (poolLocation.Y > WorldGen.lavaLine) WorldUtils.Gen(poolLocation, new Shapes.Circle(10), new GenerateSulfurAction());
+				// }
 			}));
 		}
 	}

@@ -4,35 +4,266 @@ using BaseLibrary;
 using BaseLibrary.UI;
 using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ModularTools.Core;
-using ModularTools.DataTags;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ModularTools.UI;
 
+internal class InfoPanel : UIPanel
+{
+	private UIText textModule;
+	private UIText textModuleDescription;
+	private UIModuleList textRequirements;
+	private UIModuleList textIncompatible;
+	private UIText buttonInstall;
+	private UIText buttonUninstall;
+
+	public InfoPanel()
+	{
+		#region Panels
+		UIPanelSettings settings = new()
+		{
+			BorderColor = Color.Transparent,
+			BackgroundColor = DrawingUtility.Colors.PanelSelected * 1.2f
+			// 61, 78, 143
+		};
+
+		UIPanel panelDescription = new()
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 10 },
+			PositionIncludeDims = false,
+			Settings = settings
+		};
+		Add(panelDescription);
+
+		UIPanel panelStats = new()
+		{
+			Width = { Percent = 50 },
+			Height = { Percent = 65 },
+			Y = { Percent = 10 },
+			PositionIncludeDims = false,
+			Settings = settings
+		};
+		Add(panelStats);
+
+		BaseElement holder = new()
+		{
+			Width = { Percent = 50 },
+			Height = { Percent = 65 },
+			X = { Percent = 50 },
+			Y = { Percent = 10 },
+			PositionIncludeDims = false
+		};
+		Add(holder);
+		
+		UIPanel panelRequirements = new()
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 50 },
+			Settings = settings
+		};
+		holder.Add(panelRequirements);
+
+		UIPanel panelIncompatible = new()
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 50 },
+			Y = { Percent = 100 },
+			Settings = settings
+		};
+		holder.Add(panelIncompatible);
+		
+		UIPanel panelRecipe = new()
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 20 },
+			Y = { Percent = 75 },
+			PositionIncludeDims = false,
+			Settings = settings
+		};
+		Add(panelRecipe);
+
+		UIPanel panelInstall = new()
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 5 },
+			Y = { Percent = 100 },
+			Settings = settings
+		};
+		Add(panelInstall);
+		#endregion
+
+		textModule = new UIText("")
+		{
+			Width = { Percent = 100 },
+			Height = { Pixels = 20 }
+		};
+		panelDescription.Add(textModule);
+
+		textModuleDescription = new UIText("")
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 20 },
+			Y = { Pixels = 28 }
+		};
+		panelDescription.Add(textModuleDescription);
+
+		UIText textStats = new("Stats")
+		{
+			Width = { Percent = 100 },
+			Height = { Pixels = 20 }
+		};
+		panelStats.Add(textStats);
+
+		UIText textRequirements = new("Requirements")
+		{
+			Width = { Percent = 100 },
+			Height = { Pixels = 20 }
+		};
+		panelRequirements.Add(textRequirements);
+
+		UIText textIncompatible = new("Incompatible")
+		{
+			Width = { Percent = 100 },
+			Height = { Pixels = 20 }
+		};
+		panelIncompatible.Add(textIncompatible);
+
+		UIText textRecipe = new("Recipe")
+		{
+			Width = { Percent = 100 },
+			Height = { Pixels = 20 }
+		};
+		panelRecipe.Add(textRecipe);
+
+		// textRequirements = new UIModuleList(null)
+		// {
+		// 	Width = { Pixels = 48 },
+		// 	Height = { Pixels = 48 },
+		// 	Y = { Pixels = 100 + 36 }
+		// };
+		// Add(textRequirements);
+		// 	
+		// textIncompatible = new UIModuleList(null)
+		// {
+		// 	Width = { Pixels = 48 },
+		// 	Height = { Pixels = 48 },
+		// 	X = { Percent = 100 },
+		// 	Y = { Pixels = 100 + 36 }
+		// };
+		// Add(textIncompatible);
+
+		buttonInstall = new UIText("Install")
+		{
+			Width = { Percent = 50, Pixels = -4 },
+			Height = { Percent = 100 },
+			Settings =
+			{
+				VerticalAlignment = VerticalAlignment.Center,
+				HorizontalAlignment = HorizontalAlignment.Center
+			}
+		};
+		buttonInstall.OnClick += args =>
+		{
+			args.Handled = true;
+
+			// if (selectedItem.CanInstall(selectedModule.Type))
+			// {
+			// 	BaseModule clone = selectedModule.Clone();
+			// 	clone.InternalInstall(selectedItem);
+			//
+			// 	gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.Module == selectedModule).Color = Color.LimeGreen;
+			// 	buttonInstall.Settings.Disabled = true;
+			// 	buttonUninstall.Settings.Disabled = false;
+			// }
+		};
+		panelInstall.Add(buttonInstall);
+
+		buttonUninstall = new UIText("Uninstall")
+		{
+			Width = { Percent = 50, Pixels = -4 },
+			Height = { Percent = 100 },
+			X = { Percent = 100 },
+			Settings =
+			{
+				VerticalAlignment = VerticalAlignment.Center,
+				HorizontalAlignment = HorizontalAlignment.Center
+			}
+		};
+		buttonUninstall.OnClick += args =>
+		{
+			args.Handled = true;
+
+			// if (selectedItem.CanUninstall(selectedModule.Type))
+			// {
+			// 	BaseModule clone = selectedItem.InstalledModules.First(x => x.Type == selectedModule.Type);
+			// 	clone.InternalRemove(selectedItem);
+			//
+			// 	gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.Module == selectedModule).Color = Color.Red;
+			// 	buttonInstall.Settings.Disabled = false;
+			// 	buttonUninstall.Settings.Disabled = true;
+			// }
+		};
+		panelInstall.Add(buttonUninstall);
+	}
+
+	public void SetModule(BaseModule module)
+	{
+		textModule.Text = module.DisplayName.Get();
+		textModuleDescription.Text = module.Tooltip.Get();
+
+		// string text = Core.DataTags.GetGroup<ModuleDataGroup>().GetDataFor(module.Type)
+		// 	.Aggregate("", (current, pair) => current + pair.GetText(module.Type) + "\n");
+		// text += module.Tooltip.Get();
+
+
+		// textRequirements.modules = ModuleLoader.GetRequiredModules(module.Type);
+		// textIncompatible.modules = ModuleLoader.GetIncompatibleModules(module.Type);
+
+		// textRequirements.Text = ModuleLoader.GetRequiredModules(module.Type).Aggregate("Requirements", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
+		// textIncompatible.Text = 
+		// ModuleLoader.GetIncompatibleModules(module.Type).Aggregate("Incompatible", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get())
+		// + ModuleLoader.GetIncompatibleGroups(module.Type).Aggregate("", (current, type) => current + "\n\tGroup: " +type.DisplayName.GetDefault());
+		// buttonInstall.Settings.Disabled = !selectedItem.CanInstall(module.Type);
+		// buttonUninstall.Settings.Disabled = !selectedItem.CanUninstall(module.Type);
+	}
+}
+
 public class UpgradeStationUI : BaseState
 {
 	private UIPanel panelMain;
+
 	private UIGrid<UIModularItem> gridItems;
 	private UIGrid<UIModule> gridModules;
-	private Ref<string> search = new Ref<string>("");
+	private Ref<string> search = new("");
 	private ModularItem selectedItem;
 	private BaseModule selectedModule;
-	private UIText textModule;
-	private UIText textModuleDescription;
-	private UIText textRequirements;
-	private UIText textIncompatible;
-	private UIText buttonInstall;
-	private UIText buttonUninstall;
+
+	private InfoPanel infoPanel;
 
 	public UpgradeStationUI()
 	{
 		CreateMainPanel();
 		CreateItemsPanel();
 		CreateModulesPanel();
-		CreateInfoPanel();
+
+		infoPanel = new InfoPanel
+		{
+			Width = { Percent = 60 },
+			Height = { Percent = 100, Pixels = -28 },
+			X = { Percent = 100 },
+			Y = { Pixels = 28 },
+			Settings =
+			{
+				BorderColor = Color.Transparent,
+				BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
+			}
+		};
+		panelMain.Add(infoPanel);
 	}
 
 	private void CreateMainPanel()
@@ -40,24 +271,24 @@ public class UpgradeStationUI : BaseState
 		panelMain = new UIPanel
 		{
 			Width = { Pixels = 1000 },
-			Height = { Pixels = 550 + 28 },
+			Height = { Pixels = 700 + 28 },
 			X = { Percent = 50 },
 			Y = { Percent = 50 },
 			Settings =
 			{
 				Draggable = true,
-				DragZones = new List<DragZone> { new DragZone { Width = { Percent = 100 }, Height = { Pixels = 28 } } }
+				DragZones = new List<DragZone> { new() { Width = { Percent = 100 }, Height = { Pixels = 28 } } }
 			}
 		};
 		Add(panelMain);
-		
-		UIText title = new UIText("Upgrade Station")
+
+		UIText title = new("Upgrade Station")
 		{
 			Height = { Pixels = 20 }
 		};
 		panelMain.Add(title);
 
-		UIText buttonClose = new UIText("X")
+		UIText buttonClose = new("X")
 		{
 			Height = { Pixels = 20 },
 			Width = { Pixels = 20 },
@@ -78,7 +309,7 @@ public class UpgradeStationUI : BaseState
 
 	private void CreateItemsPanel()
 	{
-		UIPanel panelItems = new UIPanel
+		UIPanel panelItems = new()
 		{
 			Width = { Pixels = 64 },
 			Height = { Percent = 100, Pixels = -28 },
@@ -100,10 +331,10 @@ public class UpgradeStationUI : BaseState
 	}
 
 	// todo: dont show info panel when no module is selected, extended module panel with more information instead
-	
+
 	private void CreateModulesPanel()
 	{
-		UIPanel panelModules = new UIPanel
+		UIPanel panelModules = new()
 		{
 			Width = { Percent = 40, Pixels = -64 },
 			Height = { Percent = 100, Pixels = -28 },
@@ -116,16 +347,16 @@ public class UpgradeStationUI : BaseState
 			}
 		};
 		panelMain.Add(panelModules);
-		
-		UIPanel panelInput = new UIPanel
+
+		UIPanel panelInput = new()
 		{
 			Width = { Percent = 100 },
 			Height = { Pixels = 36 },
 			Settings = { BorderColor = Color.Transparent }
 		};
 		panelModules.Add(panelInput);
-		
-		UITextInput input = new UITextInput(ref search)
+
+		UITextInput input = new(ref search)
 		{
 			Width = { Percent = 100 },
 			Height = { Percent = 100 },
@@ -133,9 +364,9 @@ public class UpgradeStationUI : BaseState
 			Settings = { HintText = "<Search>" }
 		};
 		panelInput.Add(input);
-		
+
 		// todo: category buttons
-		
+
 		gridModules = new UIGrid<UIModule>
 		{
 			Width = { Percent = 100 },
@@ -144,117 +375,6 @@ public class UpgradeStationUI : BaseState
 			SearchSelector = item => string.IsNullOrWhiteSpace(search.Value) || TextUtility.Search(item.Module.DisplayName.Get().ToLower(), search.Value.ToLower()).Any()
 		};
 		panelModules.Add(gridModules);
-	}
-
-	private void CreateInfoPanel()
-	{
-		UIPanel panelInfo = new UIPanel
-		{
-			Width = { Percent = 60 },
-			Height = { Percent = 100, Pixels = -28 },
-			X = { Percent = 100 },
-			Y = { Pixels = 28 },
-			Settings =
-			{
-				BorderColor = Color.Transparent,
-				BackgroundColor = DrawingUtility.Colors.PanelSelected * 0.75f
-			}
-		};
-		panelMain.Add(panelInfo);
-
-		textModule = new UIText("")
-		{
-			Width = { Percent = 100 },
-			Height = { Pixels = 20 }
-		};
-		panelInfo.Add(textModule);
-			
-		// UIDivider divider = new UIDivider
-		// {
-		// 	Width = { Percent = 100 },
-		// 	Y = { Pixels = 28 }
-		// };
-		// panelInfo.Add(divider);
-			
-		textModuleDescription = new UIText("")
-		{
-			Width = { Percent = 100 },
-			Height = { Percent = 100 },
-			Y = { Pixels = 36 }
-		};
-		panelInfo.Add(textModuleDescription);
-			
-		textRequirements = new UIText("")
-		{
-			Width = { Percent = 50 },
-			Height = { Pixels = 20 },
-			Y = { Pixels = 100 + 36 }
-		};
-		panelInfo.Add(textRequirements);
-			
-		textIncompatible = new UIText("")
-		{
-			Width = { Percent = 50 },
-			Height = { Pixels = 20 },
-			X = { Percent = 100 },
-			Y = { Pixels = 100 + 36 }
-		};
-		panelInfo.Add(textIncompatible);
-			
-		buttonInstall = new UIText("Install")
-		{
-			Width = { Percent = 50, Pixels = -4 },
-			Height = { Pixels = 30 },
-			Y = { Percent = 100 },
-			Settings =
-			{
-				VerticalAlignment = VerticalAlignment.Center,
-				HorizontalAlignment = HorizontalAlignment.Center
-			}
-		};
-		buttonInstall.OnClick += args =>
-		{
-			args.Handled = true;
-			
-			// if (selectedItem.CanInstall(selectedModule.Type))
-			// {
-			// 	BaseModule clone = selectedModule.Clone();
-			// 	clone.InternalInstall(selectedItem);
-			//
-			// 	gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.Module == selectedModule).Color = Color.LimeGreen;
-			// 	buttonInstall.Settings.Disabled = true;
-			// 	buttonUninstall.Settings.Disabled = false;
-			// }
-		};
-		panelInfo.Add(buttonInstall);
-			
-		buttonUninstall = new UIText("Uninstall")
-		{
-			Width = { Percent = 50, Pixels = -4 },
-			Height = { Pixels = 30 },
-			X = { Percent = 100 },
-			Y = { Percent = 100 },
-			Settings =
-			{
-				VerticalAlignment = VerticalAlignment.Center,
-				HorizontalAlignment = HorizontalAlignment.Center
-			}
-		};
-		buttonUninstall.OnClick += args =>
-		{
-			args.Handled = true;
-			
-			// if (selectedItem.CanUninstall(selectedModule.Type))
-			// {
-			// 	BaseModule clone = selectedItem.InstalledModules.First(x => x.Type == selectedModule.Type);
-			// 	clone.InternalRemove(selectedItem);
-			//
-			// 	gridModules.Children.OfType<UIModule>().FirstOrDefault(x => x.Module == selectedModule).Color = Color.Red;
-			// 	buttonInstall.Settings.Disabled = false;
-			// 	buttonUninstall.Settings.Disabled = true;
-			// }
-		};
-		panelInfo.Add(buttonUninstall);
 	}
 
 	public void Open()
@@ -268,7 +388,7 @@ public class UpgradeStationUI : BaseState
 		{
 			if (item.IsAir || item.ModItem is not ModularItem modularItem) continue;
 
-			UIModularItem uiModularItem = new UIModularItem(modularItem)
+			UIModularItem uiModularItem = new(modularItem)
 			{
 				Width = { Pixels = 48 },
 				Height = { Pixels = 48 }
@@ -294,10 +414,10 @@ public class UpgradeStationUI : BaseState
 		foreach (int type in ModuleLoader.GetValidModulesForItem(item.Type))
 		{
 			BaseModule module = ModuleLoader.GetModule(type);
-		
-			UIModule uiModule = new UIModule(module)
+
+			UIModule uiModule = new(module)
 			{
-				// todo: grey out when can't install
+				// todo: grey out when can't install, white-ish when selected
 				// todo: icons for (un)installed
 				Color = item.IsInstalled(module.Type) ? Color.LimeGreen : Color.Red,
 				Width = { Percent = 100 },
@@ -307,33 +427,39 @@ public class UpgradeStationUI : BaseState
 			{
 				if (args.Button != MouseButton.Left) return;
 				args.Handled = true;
-		
-				OpenModule(module);
+
+				selectedModule = module;
+				infoPanel.SetModule(module);
 			};
 			gridModules.Add(uiModule);
 		}
 	}
+}
 
-	private void OpenModule(BaseModule module)
+public class UIModuleList : BaseElement
+{
+	public List<int> modules;
+	private int currentIndex;
+	private int timer;
+
+	public UIModuleList(List<int> modules)
 	{
-		selectedModule = module;
-		
-		textModule.Text = module.DisplayName.Get();
-		
-		// todo: better group localization
-		// Language.GetTextValue($"Mods.ModularTools.ModuleData.{pair.Key}", pair.Value.Invoke<object>("Get", args: new object[] { module.Type })
-		string text = Core.DataTags.GetGroup<ModuleDataGroup>().GetDataFor(module.Type)
-			.Aggregate("", (current, pair) => current + pair.GetText(module.Type) + "\n");
-		text += module.Tooltip.Get();
-		
-		textModuleDescription.Text = text;
-		
-		textRequirements.Text = ModuleLoader.GetRequiredModules(module.Type).Aggregate("Requirements", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
-		textIncompatible.Text = 
-			ModuleLoader.GetIncompatibleModules(module.Type).Aggregate("Incompatible", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get())
-			+ ModuleLoader.GetIncompatibleGroups(module.Type).Aggregate("", (current, type) => current + "\n\tGroup: " +type.DisplayName.GetDefault());
-		// buttonInstall.Settings.Disabled = !selectedItem.CanInstall(module.Type);
-		// buttonUninstall.Settings.Disabled = !selectedItem.CanUninstall(module.Type);
+		this.modules = modules;
+	}
+
+	protected override void Draw(SpriteBatch spriteBatch)
+	{
+		if (modules == null || modules.Count == 0) return;
+
+		spriteBatch.Draw(ModContent.Request<Texture2D>(ModuleLoader.GetModule(modules[currentIndex]).Texture).Value, Dimensions);
+
+
+		if (++timer >= 30)
+		{
+			currentIndex++;
+			if (currentIndex >= modules.Count) currentIndex = 0;
+			timer = 0;
+		}
 	}
 }
 
