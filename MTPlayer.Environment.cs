@@ -12,6 +12,8 @@ public partial class MTPlayer
 	{
 	}
 
+	// temperature based on layer (-50C sky, 20C surface, 50C middle rock layer, 200C underworld)
+	
 	// public bool WearingModularSet =>
 	// 	!Player.armor[0].IsAir && Player.armor[0].ModItem is ModularHelmet &&
 	// 	!Player.armor[1].IsAir && Player.armor[1].ModItem is ModularChestplate &&

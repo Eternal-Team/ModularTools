@@ -6,6 +6,7 @@ using BaseLibrary.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ModularTools.Core;
+using ModularTools.DataTags;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -14,10 +15,113 @@ namespace ModularTools.UI;
 
 internal class InfoPanel : UIPanel
 {
+	private class UIModuleGroup : BaseElement
+	{
+		private ModuleGroup group;
+		private UITexture texture;
+		private UIText text;
+
+		public UIModuleGroup(ModuleGroup group)
+		{
+			this.group = group;
+
+			texture = new UITexture(null)
+			{
+				Height = { Percent = 100 },
+				Width = { Percent = -1 },
+				Settings =
+				{
+					ScaleMode = ScaleMode.Stretch
+				}
+			};
+			Add(texture);
+
+			text = new UIText("Group: " + group.DisplayName.Get())
+			{
+				Width = { Percent = 100 },
+				Height = { Percent = 100 },
+				Settings =
+				{
+					VerticalAlignment = VerticalAlignment.Center
+				}
+			};
+			Add(text);
+		}
+
+		public override void Recalculate()
+		{
+			base.Recalculate();
+
+			text.Width.Pixels = -texture.Dimensions.Width - 8;
+			text.X.Pixels = texture.Dimensions.Width + 8;
+			text.Recalculate();
+		}
+
+		private int currentIndex;
+		private int timer;
+
+		protected override void Draw(SpriteBatch spriteBatch)
+		{
+			var modules = group.GetEntries();
+			if (modules is null || modules.Count == 0) return;
+
+			BaseModule module = ModuleLoader.GetModule(modules[currentIndex]);
+			texture.Texture = ModContent.Request<Texture2D>(module.Texture);
+			texture.HoverText = module.DisplayName;
+
+			if (++timer >= 15)
+			{
+				currentIndex++;
+				if (currentIndex >= modules.Count) currentIndex = 0;
+				timer = 0;
+			}
+		}
+	}
+
+	private class UIModule : BaseElement
+	{
+		private UITexture texture;
+		private UIText text;
+
+		public UIModule(BaseModule module)
+		{
+			texture = new UITexture(ModContent.Request<Texture2D>(module.Texture))
+			{
+				Height = { Percent = 100 },
+				Width = { Percent = -1 },
+				Settings =
+				{
+					ScaleMode = ScaleMode.Stretch
+				}
+			};
+			Add(texture);
+
+			text = new UIText(module.DisplayName)
+			{
+				Width = { Percent = 100 },
+				Height = { Percent = 100 },
+				Settings =
+				{
+					VerticalAlignment = VerticalAlignment.Center
+				}
+			};
+			Add(text);
+		}
+
+		public override void Recalculate()
+		{
+			base.Recalculate();
+
+			text.Width.Pixels = -texture.Dimensions.Width - 8;
+			text.X.Pixels = texture.Dimensions.Width + 8;
+			text.Recalculate();
+		}
+	}
+
 	private UIText textModule;
 	private UIText textModuleDescription;
-	private UIModuleList textRequirements;
-	private UIModuleList textIncompatible;
+	private UIGrid<BaseElement> gridRequired;
+	private UIGrid<BaseElement> gridIncompatible;
 	private UIText buttonInstall;
 	private UIText buttonUninstall;
 
@@ -59,7 +163,7 @@ internal class InfoPanel : UIPanel
 			PositionIncludeDims = false
 		};
 		Add(holder);
-		
+
 		UIPanel panelRequirements = new()
 		{
 			Width = { Percent = 100 },
@@ -76,7 +180,7 @@ internal class InfoPanel : UIPanel
 			Settings = settings
 		};
 		holder.Add(panelIncompatible);
-		
+
 		UIPanel panelRecipe = new()
 		{
 			Width = { Percent = 100 },
@@ -126,6 +230,14 @@ internal class InfoPanel : UIPanel
 		};
 		panelRequirements.Add(textRequirements);
 
+		gridRequired = new UIGrid<BaseElement>
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 100, Pixels = -28 },
+			Y = { Pixels = 28 }
+		};
+		panelRequirements.Add(gridRequired);
+
 		UIText textIncompatible = new("Incompatible")
 		{
 			Width = { Percent = 100 },
@@ -133,29 +245,20 @@ internal class InfoPanel : UIPanel
 		};
 		panelIncompatible.Add(textIncompatible);
 
+		gridIncompatible = new UIGrid<BaseElement>
+		{
+			Width = { Percent = 100 },
+			Height = { Percent = 100, Pixels = -28 },
+			Y = { Pixels = 28 }
+		};
+		panelIncompatible.Add(gridIncompatible);
+
 		UIText textRecipe = new("Recipe")
 		{
 			Width = { Percent = 100 },
 			Height = { Pixels = 20 }
 		};
 		panelRecipe.Add(textRecipe);
-
-		// textRequirements = new UIModuleList(null)
-		// {
-		// 	Width = { Pixels = 48 },
-		// 	Height = { Pixels = 48 },
-		// 	Y = { Pixels = 100 + 36 }
-		// };
-		// Add(textRequirements);
-		// 	
-		// textIncompatible = new UIModuleList(null)
-		// {
-		// 	Width = { Pixels = 48 },
-		// 	Height = { Pixels = 48 },
-		// 	X = { Percent = 100 },
-		// 	Y = { Pixels = 100 + 36 }
-		// };
-		// Add(textIncompatible);
 
 		buttonInstall = new UIText("Install")
 		{
@@ -216,18 +319,43 @@ internal class InfoPanel : UIPanel
 		textModule.Text = module.DisplayName.Get();
 		textModuleDescription.Text = module.Tooltip.Get();
 
+		gridIncompatible.Clear();
+		gridRequired.Clear();
+
+		foreach (ModuleGroup group in ModuleLoader.GetIncompatibleGroups(module.Type))
+		{
+			UIModuleGroup uiGroup = new(group)
+			{
+				Width = { Percent = 100 },
+				Height = { Pixels = 30 }
+			};
+			gridIncompatible.Add(uiGroup);
+		}
+
+		foreach (int type in ModuleLoader.GetIncompatibleModules(module.Type))
+		{
+			UIModule uiModule = new(ModuleLoader.GetModule(type))
+			{
+				Width = { Percent = 100 },
+				Height = { Pixels = 30 }
+			};
+			gridIncompatible.Add(uiModule);
+		}
+		
+		foreach (int type in ModuleLoader.GetRequiredModules(module.Type))
+		{
+			UIModule uiModule = new(ModuleLoader.GetModule(type))
+			{
+				Width = { Percent = 100 },
+				Height = { Pixels = 30 }
+			};
+			gridRequired.Add(uiModule);
+		}
+
 		// string text = Core.DataTags.GetGroup<ModuleDataGroup>().GetDataFor(module.Type)
 		// 	.Aggregate("", (current, pair) => current + pair.GetText(module.Type) + "\n");
 		// text += module.Tooltip.Get();
 
-
-		// textRequirements.modules = ModuleLoader.GetRequiredModules(module.Type);
-		// textIncompatible.modules = ModuleLoader.GetIncompatibleModules(module.Type);
-
-		// textRequirements.Text = ModuleLoader.GetRequiredModules(module.Type).Aggregate("Requirements", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get());
-		// textIncompatible.Text = 
-		// ModuleLoader.GetIncompatibleModules(module.Type).Aggregate("Incompatible", (current, type) => current + "\n\t" + ModuleLoader.GetModule(type).DisplayName.Get())
-		// + ModuleLoader.GetIncompatibleGroups(module.Type).Aggregate("", (current, type) => current + "\n\tGroup: " +type.DisplayName.GetDefault());
 		// buttonInstall.Settings.Disabled = !selectedItem.CanInstall(module.Type);
 		// buttonUninstall.Settings.Disabled = !selectedItem.CanUninstall(module.Type);
 	}
@@ -432,33 +560,6 @@ public class UpgradeStationUI : BaseState
 				infoPanel.SetModule(module);
 			};
 			gridModules.Add(uiModule);
-		}
-	}
-}
-
-public class UIModuleList : BaseElement
-{
-	public List<int> modules;
-	private int currentIndex;
-	private int timer;
-
-	public UIModuleList(List<int> modules)
-	{
-		this.modules = modules;
-	}
-
-	protected override void Draw(SpriteBatch spriteBatch)
-	{
-		if (modules == null || modules.Count == 0) return;
-
-		spriteBatch.Draw(ModContent.Request<Texture2D>(ModuleLoader.GetModule(modules[currentIndex]).Texture).Value, Dimensions);
-
-
-		if (++timer >= 30)
-		{
-			currentIndex++;
-			if (currentIndex >= modules.Count) currentIndex = 0;
-			timer = 0;
 		}
 	}
 }

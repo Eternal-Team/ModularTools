@@ -7,6 +7,8 @@ namespace ModularTools.Content.Modules;
 
 public class LeadAcidBattery : BaseModule
 {
+	public override string Texture => ModularTools.TexturePath + "Projectiles/ModularHook";
+
 	public override void SetStaticDefaults()
 	{
 		ModuleTags.Battery.Set(this);
@@ -16,6 +18,7 @@ public class LeadAcidBattery : BaseModule
 
 		AddValidModularItem<ModularBore>();
 		AddIncompatibleModules(ModuleTags.Battery);
+		AddRequiredModule<AluminiumPlating>();
 	}
 
 	public override void AddRecipes()

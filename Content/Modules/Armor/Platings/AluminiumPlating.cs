@@ -1,4 +1,4 @@
-﻿/*using ModularTools.Content.Items.Tools;
+﻿using ModularTools.Content.Items.Tools;
 using ModularTools.Core;
 using ModularTools.DataTags;
 using Terraria.ID;
@@ -30,4 +30,4 @@ public class AluminiumPlating : BaseModule
 	// {
 	// 	item.HeatStorage.ThermalConductivity = Math.Max(14f, item.HeatStorage.ThermalConductivity);
 	// }
-}*/
+}

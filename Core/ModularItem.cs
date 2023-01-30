@@ -19,6 +19,8 @@ public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 	public EnergyStorage EnergyStorage;
 	public HeatStorage HeatStorage;
 
+	// bool[id] array for fast lookup
+	
 	public sealed override void AutoStaticDefaults()
 	{
 		base.AutoStaticDefaults();

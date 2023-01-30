@@ -8,6 +8,11 @@ namespace ModularTools;
 // resources, machines
 // armor
 
+// specializations: bow, gun, shortsword, longsword
+
+// megastructures: rotator (change time), atmospheric controller (change weather)
+// not sure if i want these in Modular Tools
+
 public class ModularTools : Mod
 {
 	public const string AssetPath = "ModularTools/Assets/";
