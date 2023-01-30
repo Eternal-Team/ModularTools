@@ -16,6 +16,7 @@ public class ModuleDataGroup : DataTagGroup
 /// </summary>
 public static class ModuleData
 {
+	// add a switch for cumulative (defense)/max (potion prolongation)
 	public static readonly DataTagData<int> Defense = Core.DataTags.Get<ModuleDataGroup, int>(nameof(Defense)).AddLocalization(l => $"Provides {l} defense");
 	public static readonly DataTagData<long> HeatCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity)).AddLocalization(l => $"Heat Capacity: {TextUtility.ToSI(l)}J");
 	public static readonly DataTagData<long> EnergyCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity)).AddLocalization(l => $"Energy Capacity: {TextUtility.ToSI(l)}J");
@@ -60,16 +61,19 @@ public class GroupSystem : ModType
 public class ModuleGroup
 {
 	public readonly ModTranslation DisplayName;
+	private readonly bool[] idToValue = new bool[ModuleLoader.Count];
+	private readonly List<int> entryList = new();
 
 	public ModuleGroup(string name)
 	{
 		DisplayName = LocalizationLoader.GetOrCreateTranslation("Mods.ModularTools.ModuleGroup." + name);
 	}
 
-	private readonly bool[] idToValue = new bool[ModuleLoader.Count];
+	public List<int> GetEntries() => entryList;
 
 	public void Set(BaseModule module)
 	{
 		idToValue[module.Type] = true;
+		if (!entryList.Contains(module.Type)) entryList.Add(module.Type);
 	}
 }
