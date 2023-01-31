@@ -17,10 +17,13 @@ public class ModuleDataGroup : DataTagGroup
 public static class ModuleData
 {
 	// add a switch for cumulative (defense)/max (potion prolongation)
-	public static readonly DataTagData<int> Defense = Core.DataTags.Get<ModuleDataGroup, int>(nameof(Defense)).AddLocalization(l => $"Provides {l} defense");
-	public static readonly DataTagData<long> HeatCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity)).AddLocalization(l => $"Heat Capacity: {TextUtility.ToSI(l)}J");
-	public static readonly DataTagData<long> EnergyCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity)).AddLocalization(l => $"Energy Capacity: {TextUtility.ToSI(l)}J");
-	public static readonly DataTagData<ulong> EnergyTransfer = Core.DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer)).AddLocalization(l => $"Energy Transfer: {TextUtility.ToSI(l)}J");
+	public static readonly DataTagData<int> Defense = Core.DataTags.Get<ModuleDataGroup, int>(nameof(Defense)).AddLocalization(l => $"Provides {l} defense").AddTexture(ModularTools.TexturePath + "Projectiles/ModularHook");
+
+	public static readonly DataTagData<long> HeatCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(HeatCapacity)).AddLocalization(l => $"Heat Capacity: {TextUtility.ToSI(l, "#.##")}J");
+	public static readonly DataTagData<ulong> HeatTransfer = Core.DataTags.Get<ModuleDataGroup, ulong>(nameof(HeatTransfer)).AddLocalization(l => $"Heat Transfer: {TextUtility.ToSI(l, "#.##")}W");
+
+	public static readonly DataTagData<long> EnergyCapacity = Core.DataTags.Get<ModuleDataGroup, long>(nameof(EnergyCapacity)).AddLocalization(l => $"Energy Capacity: {TextUtility.ToSI(l, "#.##")}J");
+	public static readonly DataTagData<ulong> EnergyTransfer = Core.DataTags.Get<ModuleDataGroup, ulong>(nameof(EnergyTransfer)).AddLocalization(l => $"Energy Transfer: {TextUtility.ToSI(l, "#.##")}W");
 }
 
 /// <summary>

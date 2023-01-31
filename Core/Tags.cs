@@ -37,12 +37,12 @@ public abstract class DataTagGroup : ModType
 			if (value.Has(type)) yield return value;
 		}
 	}
-	
+
 	public DataTagData<T> GetTag<T>(string tagName)
 	{
 		if (!TagNameToData.TryGetValue(tagName, out var data))
 		{
-			TagNameToData[tagName] = data = new DataTagData<T>(TypeCount);
+			TagNameToData[tagName] = data = new DataTagData<T>();
 		}
 
 		return (DataTagData<T>)data;
@@ -52,12 +52,12 @@ public abstract class DataTagGroup : ModType
 public abstract class DataTagData
 {
 	protected readonly List<int> entryList;
-	// protected readonly IReadOnlyList<int> readonlyEntryList;
+
+	public string Texture { get; protected set; } = BaseLibrary.BaseLibrary.PlaceholderTexture;
 
 	internal DataTagData()
 	{
 		entryList = new List<int>();
-		// readonlyEntryList = entryList.AsReadOnly();
 	}
 
 	public bool Has(int id) => entryList.Contains(id);
@@ -69,12 +69,11 @@ public abstract class DataTagData
 
 public class DataTagData<T> : DataTagData
 {
-	private readonly T[] idToValue;
+	private readonly T[] idToValue = new T[ModuleLoader.Count];
 	private Func<T, string> localization;
 
-	internal DataTagData(int maxEntries)
+	internal DataTagData()
 	{
-		idToValue = new T[maxEntries];
 	}
 
 	public T Get(int id) => idToValue[id];
@@ -106,6 +105,12 @@ public class DataTagData<T> : DataTagData
 	public DataTagData<T> AddLocalization(Func<T, string> func)
 	{
 		localization = func;
+		return this;
+	}
+
+	public DataTagData<T> AddTexture(string texture)
+	{
+		Texture = texture;
 		return this;
 	}
 }
