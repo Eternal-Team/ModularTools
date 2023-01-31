@@ -7,62 +7,15 @@ namespace ModularTools.Core;
 
 public sealed class ModuleRecipe
 {
-	public readonly Mod Mod;
-	public BaseModule createItem;
-	public List<Item> requiredItems = new List<Item>();
-	public List<int> acceptedGroups = new List<int>();
+	public readonly BaseModule module;
+	public readonly List<Item> requiredItems = new();
+	public readonly List<(int, int)> requiredGroups = new();
 
-	public static List<ModuleRecipe> recipes = new List<ModuleRecipe>();
+	public static readonly Dictionary<int, ModuleRecipe> recipes = new();
 
-	private ModuleRecipe(Mod mod)
+	public ModuleRecipe(BaseModule module)
 	{
-		Mod = mod;
-	}
-
-	private void RequireGroup(int id)
-	{
-		int num = 0;
-		while (true)
-		{
-			if (num < acceptedGroups.Count)
-			{
-				if (acceptedGroups[num] == -1)
-					break;
-
-				num++;
-				continue;
-			}
-
-			return;
-		}
-
-		acceptedGroups[num] = id;
-	}
-
-	internal bool ProcessGroupsForText(int type, out string theText)
-	{
-		foreach (int num in acceptedGroups)
-		{
-			if (RecipeGroup.recipeGroups[num].ContainsItem(type))
-			{
-				theText = RecipeGroup.recipeGroups[num].GetText();
-				return true;
-			}
-		}
-
-		theText = "";
-		return false;
-	}
-
-	internal bool AcceptedByItemGroups(int invType, int reqType)
-	{
-		foreach (int num in acceptedGroups)
-		{
-			if (RecipeGroup.recipeGroups[num].ContainsItem(invType) && RecipeGroup.recipeGroups[num].ContainsItem(reqType))
-				return true;
-		}
-
-		return false;
+		this.module = module;
 	}
 
 	/// <summary>
@@ -91,11 +44,6 @@ public sealed class ModuleRecipe
 	/// </exception>
 	public ModuleRecipe AddIngredient(Mod mod, string itemName, int stack = 1)
 	{
-		if (mod == null)
-		{
-			mod = Mod;
-		}
-
 		if (!ModContent.TryFind(mod.Name, itemName, out ModItem item))
 			throw new RecipeException($"The item {itemName} does not exist in the mod {mod.Name}.\r\nIf you are trying to use a vanilla item, try removing the first argument.");
 
@@ -130,10 +78,7 @@ public sealed class ModuleRecipe
 			throw new RecipeException($"A recipe group with the name {name} does not exist.");
 
 		int id = RecipeGroup.recipeGroupIDs[name];
-		var group = RecipeGroup.recipeGroups[id];
-
-		AddIngredient(group.IconicItemId, stack);
-		acceptedGroups.Add(id);
+		requiredGroups.Add((id, stack));
 
 		return this;
 	}
@@ -150,10 +95,7 @@ public sealed class ModuleRecipe
 		if (!RecipeGroup.recipeGroups.ContainsKey(recipeGroupId))
 			throw new RecipeException($"A recipe group with the ID {recipeGroupId} does not exist.");
 
-		RecipeGroup rec = RecipeGroup.recipeGroups[recipeGroupId];
-
-		AddIngredient(rec.IconicItemId, stack);
-		acceptedGroups.Add(recipeGroupId);
+		requiredGroups.Add((recipeGroupId, stack));
 
 		return this;
 	}
@@ -164,8 +106,7 @@ public sealed class ModuleRecipe
 	/// <param name="recipeGroup">The RecipeGroup.</param>
 	public ModuleRecipe AddRecipeGroup(RecipeGroup recipeGroup, int stack = 1)
 	{
-		AddIngredient(recipeGroup.IconicItemId, stack);
-		acceptedGroups.Add(recipeGroup.ID);
+		requiredGroups.Add((recipeGroup.ID, stack));
 
 		return this;
 	}
@@ -176,15 +117,12 @@ public sealed class ModuleRecipe
 	/// <exception cref="RecipeException">A recipe without any result has been added.</exception>
 	public void Register()
 	{
-		if (createItem == null)
+		if (module == null)
 			throw new RecipeException("A recipe without any result has been added.");
 
-		recipes.Add(this);
-	}
+		if (recipes.ContainsKey(module.Type))
+			throw new RecipeException("Recipe for module has been already added.");
 
-	internal static ModuleRecipe Create(Mod mod, BaseModule module)
-	{
-		var recipe = new ModuleRecipe(mod) { createItem = module };
-		return recipe;
+		recipes.Add(module.Type, this);
 	}
 }

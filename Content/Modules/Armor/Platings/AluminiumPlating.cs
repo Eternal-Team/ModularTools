@@ -9,11 +9,10 @@ public class AluminiumPlating : BaseModule
 {
 	public override void SetStaticDefaults()
 	{
-		Tooltip.SetDefault("Increases heat transfer rate to 12 W/m2\nProvides 4.5 kJ of heat capacity");
-
 		ModuleData.Defense.Set(Type, 4);
 		ModuleTags.Plating.Set(this);
 		ModuleData.HeatCapacity.Set(Type, 4500);
+		ModuleData.HeatTransfer.Set(Type, 14);
 
 		AddValidModularItem<ModularBore>();
 		AddIncompatibleModules(ModuleTags.Plating);

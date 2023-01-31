@@ -122,7 +122,7 @@ public abstract class BaseModule : ModTexturedType
 	{
 	}
 
-	internal void OnRemovedInternal(ModularItem item)
+	internal void OnUninstalledInternal(ModularItem item)
 	{
 		item.EnergyStorage.ModifyCapacity(-ModuleData.EnergyCapacity.Get(Type));
 
@@ -134,10 +134,10 @@ public abstract class BaseModule : ModTexturedType
 
 		item.EnergyStorage.SetMaxTransfer(max);
 
-		OnRemoved(item);
+		OnUninstalled(item);
 	}
 
-	public virtual void OnRemoved(ModularItem item)
+	public virtual void OnUninstalled(ModularItem item)
 	{
 	}
 
@@ -162,6 +162,6 @@ public abstract class BaseModule : ModTexturedType
 
 	protected ModuleRecipe CreateRecipe()
 	{
-		return ModuleRecipe.Create(Mod, this);
+		return new ModuleRecipe(this);
 	}
 }

@@ -86,18 +86,13 @@ public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 	{
 		InstalledModules.Add(module);
 
-		// HeatStorage.ModifyCapacity(module.HeatCapacity);
-
-		module.OnInstalled(this);
+		module.OnInstalledInternal(this);
 	}
 
-	public void UninstallModule()
+	public void UninstallModule(int type)
 	{
-		// item.InstalledModules.Remove(this);
-		//
-		// item.HeatStorage.ModifyCapacity(-HeatCapacity);
-		//
-		// OnRemoved(item);
+		BaseModule clone = InstalledModules.FirstOrDefault(x => x.Type == type);
+		clone?.OnUninstalledInternal(this);
 	}
 
 	#region Utility

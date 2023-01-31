@@ -24,6 +24,7 @@ public class LeadAcidBattery : BaseModule
 	public override void AddRecipes()
 	{
 		CreateRecipe()
+			.AddRecipeGroup(RecipeGroupID.Wood, 50)
 			.AddIngredient(ItemID.IronBar, 12)
 			.Register();
 	}
