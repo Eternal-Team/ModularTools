@@ -18,6 +18,11 @@ namespace ModularTools.UI;
 internal class InfoPanel : UIPanel
 {
 	// todo: highlight if requirements are met/incompatibilities found
+	// todo: consume items	
+	// todo: enable/disable install button 
+
+	private const int IconSize = 20;
+	
 	#region Required & Incompatible
 	private class UIModuleGroup : BaseElement
 	{
@@ -187,8 +192,6 @@ internal class InfoPanel : UIPanel
 	#endregion
 
 	#region Stats
-	private UIGrid<BaseElement> gridStats;
-
 	private class UIStat : BaseElement
 	{
 		private UITexture texture;
@@ -229,6 +232,8 @@ internal class InfoPanel : UIPanel
 		}
 	}
 
+	private UIGrid<BaseElement> gridStats;
+
 	private void SetupStats()
 	{
 		UIPanel panelStats = new()
@@ -257,14 +262,15 @@ internal class InfoPanel : UIPanel
 		panelStats.Add(gridStats);
 	}
 	#endregion
-
+	
 	#region Recipe
 	private class UIRecipeGroup : BaseElement
 	{
 		private int currentIndex;
 		private int timer;
-		private List<Item> items;
+		public List<Item> items;
 		private UIItem item;
+		public bool available;
 
 		public UIRecipeGroup(int id, int stack)
 		{
@@ -280,6 +286,7 @@ internal class InfoPanel : UIPanel
 
 		protected override void Draw(SpriteBatch spriteBatch)
 		{
+			item.available = available;
 			if (++timer >= 15)
 			{
 				currentIndex++;
@@ -293,6 +300,7 @@ internal class InfoPanel : UIPanel
 	private class UIItem : BaseElement
 	{
 		public Item item;
+		public bool available;
 
 		public UIItem(Item item)
 		{
@@ -337,7 +345,7 @@ internal class InfoPanel : UIPanel
 				string text = item.stack.ToString();
 				const float texscale = 0.8f;
 				Vector2 size = FontAssets.MouseText.Value.MeasureString(text) * texscale;
-				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, InnerDimensions.BottomRight() - new Vector2(4f, 0f), Color.White, 0f, size, new Vector2(texscale));
+				ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, text, InnerDimensions.BottomRight() - new Vector2(4f, 0f), available?Color.Lime:Color.White, 0f, size, new Vector2(texscale));
 			}
 
 			if (IsMouseHovering)
@@ -398,8 +406,34 @@ internal class InfoPanel : UIPanel
 		// 61, 78, 143
 	};
 
+	private void FindRecipes()
+	{
+		foreach (BaseElement element in gridRecipe.Children)
+		{
+			if (element is UIRecipeGroup group)
+			{
+				int count = 0;
+				foreach (Item groupItem in group.items)
+				{
+					count += Main.LocalPlayer.CountItem(groupItem.type);
+					if (count >= groupItem.stack)
+					{
+						group.available = true;
+						break;
+					}
+				}
+			}
+			else if (element is UIItem item)
+			{
+				item.available = Main.LocalPlayer.CountItem(item.item.type) >= item.item.stack;
+			}
+		}
+	}
+	
 	public InfoPanel()
 	{
+		Hooking.OnFindRecipes += FindRecipes;
+		
 		#region Panels
 		UIPanel panelDescription = new()
 		{
@@ -455,13 +489,9 @@ internal class InfoPanel : UIPanel
 		{
 			args.Handled = true;
 
-			if (item.CanInstall(module.Type))
+			BaseModule clone = module.Clone();
+			if (item.InstallModule(clone))
 			{
-				BaseModule clone = module.Clone();
-				item.InstallModule(clone);
-				
-				// todo: consume items
-
 				uiModule.Color = Color.Lime;
 				// buttonInstall.Settings.Disabled = true;
 				// buttonUninstall.Settings.Disabled = false;
@@ -484,12 +514,8 @@ internal class InfoPanel : UIPanel
 		{
 			args.Handled = true;
 
-			if (item.CanUninstall(module.Type))
+			if (item.UninstallModule(module.Type))
 			{
-				item.UninstallModule(module.Type);
-			
-				// todo: return items
-
 				uiModule.Color = Color.Red;
 				// buttonInstall.Settings.Disabled = false;
 				// buttonUninstall.Settings.Disabled = true;
@@ -515,7 +541,7 @@ internal class InfoPanel : UIPanel
 			UIModuleGroup uiGroup = new(incompatibleGroup)
 			{
 				Width = { Percent = 100 },
-				Height = { Pixels = 30 }
+				Height = { Pixels = IconSize }
 			};
 			gridIncompatible.Add(uiGroup);
 		}
@@ -525,7 +551,7 @@ internal class InfoPanel : UIPanel
 			UIModule uiModule = new(ModuleLoader.GetModule(incompatibleModule))
 			{
 				Width = { Percent = 100 },
-				Height = { Pixels = 30 }
+				Height = { Pixels = IconSize }
 			};
 			gridIncompatible.Add(uiModule);
 		}
@@ -535,7 +561,7 @@ internal class InfoPanel : UIPanel
 			UIModule uiModule = new(ModuleLoader.GetModule(requiredModule))
 			{
 				Width = { Percent = 100 },
-				Height = { Pixels = 30 }
+				Height = { Pixels = IconSize }
 			};
 			gridRequired.Add(uiModule);
 		}
@@ -546,7 +572,7 @@ internal class InfoPanel : UIPanel
 			UIStat text = new(data, module)
 			{
 				Width = { Percent = 100 },
-				Height = { Pixels = 20 }
+				Height = { Pixels = IconSize }
 			};
 			gridStats.Add(text);
 		}
@@ -575,6 +601,8 @@ internal class InfoPanel : UIPanel
 				gridRecipe.Add(uiItem);
 			}
 		}
+
+		FindRecipes();
 
 		// buttonInstall.Settings.Disabled = !selectedItem.CanInstall(module.Type);
 		// buttonUninstall.Settings.Disabled = !selectedItem.CanUninstall(module.Type);

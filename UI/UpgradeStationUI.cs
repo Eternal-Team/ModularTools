@@ -13,6 +13,8 @@ namespace ModularTools.UI;
 public class UpgradeStationUI : BaseState
 {
 	private UIPanel panelMain;
+	
+	// todo: improve module list
 
 	private UIGrid<UIModularItem> gridItems;
 	private UIGrid<UIModule> gridModules;

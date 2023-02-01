@@ -59,6 +59,7 @@ public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
 		tooltips.Add(new TooltipLine(Mod, "MT:Energy", TextUtility.WithColor($"Energy: {EnergyStorage.Energy}/{EnergyStorage.Capacity} J", new Color(28, 218, 232))));
+		tooltips.Add(new TooltipLine(Mod, "MT:Transfer", TextUtility.WithColor($"Transfer: {EnergyStorage.MaxReceive} J", new Color(28, 218, 232))));
 		// tooltips.Add(new TooltipLine(Mod, "MT:Temperature", TextUtility.WithColor($"Temperature: {Math.Round(HeatStorage.Temperature)}", new Color(255, 91, 20))));
 		// tooltips.Add(new TooltipLine(Mod, "MT:Transfering", TextUtility.WithColor($"Transfering: {Math.Round(HeatStorage.ThermalConductivity * HeatStorage.Area, 1)} W", new Color(185, 255, 20))));
 		tooltips.Add(new TooltipLine(Mod, "MT:Modules", $"{InstalledModules.Count} installed modules"));
@@ -82,17 +83,27 @@ public abstract class ModularItem : BaseItem, IEnergyStorage, IHeatStorage
 
 	public HeatStorage GetHeatStorage() => HeatStorage;
 
-	public void InstallModule(BaseModule module)
+	public bool InstallModule(BaseModule module)
 	{
+		if (!CanInstall(module.Type)) return false;
+		
 		InstalledModules.Add(module);
 
 		module.OnInstalledInternal(this);
+
+		return true;
 	}
 
-	public void UninstallModule(int type)
+	public bool UninstallModule(int type)
 	{
+		if (!CanUninstall(type)) return false;
+		
 		BaseModule clone = InstalledModules.FirstOrDefault(x => x.Type == type);
 		clone?.OnUninstalledInternal(this);
+
+		InstalledModules.Remove(clone);
+
+		return true;
 	}
 
 	#region Utility
